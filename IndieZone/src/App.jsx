@@ -1,32 +1,145 @@
-import { useState } from 'react'
-import ClienteCard from './components/ClienteCard'
+import { useState } from "react";
 
-const clientesIniciales = [
-  { id: 1, nombre: 'Ana García',  ruc: '20111222333', email: 'ana@mail.com',   telefono: '999888777' },
-  { id: 2, nombre: 'Luis Torres', ruc: '20444555666', email: 'luis@mail.com',  telefono: '988777666' },
-  { id: 3, nombre: 'María Rodas', ruc: '20777888999', email: 'maria@mail.com', telefono: '977666555' },
-]
+import Login from "./components/Login";
+import Navbar from "./components/Navbar";
+
+import Dashboard from "./components/Dashboard";
+import RegistroProducto from "./components/RegistroProducto";
+import Categoria from "./components/Categoria";
+import Oferta from "./components/Oferta";
+import Ventas from "./components/Ventas";
+import DetalleVenta from "./components/DetalleVenta";
+import Cliente from "./components/Cliente";
+import Reportes from "./components/Reportes";
+
 
 function App() {
-  const [clientes, setClientes] = useState(clientesIniciales)
+
+  const [sesionIniciada, setSesionIniciada] = useState(false);
+
+  const [pagina, setPagina] = useState("dashboard");
+
+
+  // =========================================================
+  // LOGIN
+  // =========================================================
+
+  if (!sesionIniciada) {
+
+    return (
+      <Login
+        setSesionIniciada={setSesionIniciada}
+      />
+    );
+
+  }
+
+
+  // =========================================================
+  // SISTEMA
+  // =========================================================
 
   return (
-    <div className="container mt-4">
-      <h1 className="text-primary mb-1">GestioPro</h1>
-      <p className="text-muted mb-4">Sistema de Gestión · Semana 11</p>
-      <h4 className="mb-3">
-        Clientes
-        <span className="badge bg-primary ms-2">{clientes.length}</span>
-      </h4>
-      <div className="row">
-        {clientes.map(cliente => (
-          <div className="col-md-4 mb-3" key={cliente.id}>
-            <ClienteCard cliente={cliente} />
-          </div>
-        ))}
-      </div>
+    <div className="min-vh-100 bg-body-tertiary">
+
+
+      {/* NAVBAR */}
+
+      <Navbar
+        pagina={pagina}
+        setPagina={setPagina}
+        setSesionIniciada={setSesionIniciada}
+      />
+
+
+      {/* CONTENIDO */}
+
+      <main className="container-fluid px-3 px-md-4 px-lg-5 py-4">
+
+
+        {/* DASHBOARD */}
+
+        {pagina === "dashboard" && (
+
+          <Dashboard
+            setPagina={setPagina}
+          />
+
+        )}
+
+
+        {/* PRODUCTOS */}
+
+        {pagina === "producto" && (
+
+          <RegistroProducto
+            setPagina={setPagina}
+          />
+
+        )}
+
+
+        {/* CATEGORÍAS */}
+
+        {pagina === "categoria" && (
+
+          <Categoria />
+
+        )}
+
+
+        {/* OFERTAS */}
+
+        {pagina === "oferta" && (
+
+          <Oferta />
+
+        )}
+
+
+        {/* VENTAS */}
+
+        {pagina === "ventas" && (
+
+          <Ventas
+            setPagina={setPagina}
+          />
+
+        )}
+
+
+        {/* DETALLE DE VENTA */}
+
+        {pagina === "detalleVenta" && (
+
+          <DetalleVenta
+            setPagina={setPagina}
+          />
+
+        )}
+
+
+        {/* CLIENTES */}
+
+        {pagina === "cliente" && (
+
+          <Cliente />
+
+        )}
+
+
+        {/* REPORTES */}
+
+        {pagina === "reportes" && (
+
+          <Reportes />
+
+        )}
+
+      </main>
+
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

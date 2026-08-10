@@ -1,0 +1,1450 @@
+/* =========================================================
+   PALETA GENERAL - INDIEZONE
+========================================================= */
+
+:root {
+  --fondo: #f7f8fc;
+  --blanco: #ffffff;
+
+  --texto: #14213d;
+  --texto-secundario: #6b7280;
+
+  --borde: #d9dee8;
+
+  --morado: #526fd6;
+  --morado-claro: #a5a6f6;
+  --morado-suave: #ecebff;
+
+  --azul: #3b82f6;
+  --azul-suave: #d9e8ff;
+
+  --verde: #2f8f73;
+  --verde-suave: #dff3ea;
+
+  --coral: #ff7b6b;
+  --coral-suave: #ffe7e3;
+
+  --amarillo: #f59e0b;
+  --amarillo-suave: #fff0c7;
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background-color: var(--fondo);
+  color: var(--texto);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+  min-height: 100vh;
+  background-color: var(--fondo);
+}
+
+
+/* =========================================================
+   NAVBAR SUPERIOR
+========================================================= */
+
+.navbar {
+  min-height: 88px;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 30px;
+
+  padding: 0 35px;
+
+  background-color: var(--blanco);
+
+  border-bottom: 1px solid var(--borde);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+
+/* =========================================================
+   LOGO NAVBAR
+========================================================= */
+
+.logo {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  font-size: 24px;
+  font-weight: bold;
+
+  color: var(--texto);
+
+  white-space: nowrap;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+}
+
+.logo:hover {
+  transform: scale(1.04);
+}
+
+.logo span {
+  color: var(--texto);
+}
+
+.logo strong {
+  color: var(--morado);
+}
+
+
+/* =========================================================
+   MENÚ
+========================================================= */
+
+.menu {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 6px;
+}
+
+.menu button {
+  position: relative;
+
+  border: none;
+
+  background-color: transparent;
+
+  color: var(--texto);
+
+  padding: 14px 15px;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease;
+}
+
+.menu button:hover {
+  background-color: var(--morado-suave);
+
+  color: var(--morado);
+
+  transform: translateY(-2px);
+}
+
+.menu button.activo {
+  background-color: var(--morado-suave);
+
+  color: var(--morado);
+
+  font-weight: bold;
+}
+
+.menu button.activo::after {
+  content: "";
+
+  position: absolute;
+
+  left: 18%;
+  right: 18%;
+
+  bottom: 5px;
+
+  height: 2px;
+
+  border-radius: 10px;
+
+  background-color: var(--morado);
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
+
+.cerrar-sesion {
+  border: 1px solid transparent;
+
+  background-color: transparent;
+
+  color: var(--texto);
+
+  padding: 13px 15px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease;
+}
+
+.cerrar-sesion:hover {
+  background-color: var(--coral-suave);
+
+  color: var(--coral);
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+========================================================= */
+
+.contenido {
+  width: 100%;
+
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding: 45px 55px 60px;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-page {
+  width: 100%;
+}
+
+
+/* =========================================================
+   ENCABEZADO DEL DASHBOARD
+========================================================= */
+
+.dashboard-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 35px;
+}
+
+.dashboard-title h1 {
+  margin: 0;
+
+  font-size: 38px;
+
+  color: var(--texto);
+}
+
+.dashboard-title p {
+  margin: 8px 0 0;
+
+  color: var(--texto-secundario);
+
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   FECHA Y HORA
+========================================================= */
+
+.dashboard-date {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px 18px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 10px;
+
+  background-color: var(--blanco);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-date:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 5px 15px rgba(20, 33, 61, 0.08);
+}
+
+.date-icon {
+  font-size: 25px;
+}
+
+.date-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.current-date {
+  color: var(--texto);
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  text-transform: capitalize;
+}
+
+.current-time {
+  color: var(--morado);
+
+  font-size: 14px;
+
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   TARJETAS DEL DASHBOARD
+========================================================= */
+
+.dashboard-stats {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 25px;
+
+  margin-bottom: 35px;
+}
+
+
+/* TARJETA */
+
+.stat-card {
+  min-height: 145px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 24px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+
+  box-shadow: 0 10px 25px rgba(20, 33, 61, 0.12);
+}
+
+
+/* ICONO */
+
+.stat-icon {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background-color: rgba(255, 255, 255, 0.5);
+
+  font-size: 34px;
+
+  flex-shrink: 0;
+}
+
+
+/* INFORMACIÓN */
+
+.stat-info h2 {
+  margin: 0;
+
+  font-size: 35px;
+
+  color: var(--texto);
+}
+
+.stat-info p {
+  margin: 4px 0;
+
+  font-size: 17px;
+
+  font-weight: bold;
+
+  color: var(--texto);
+}
+
+.stat-info span {
+  font-size: 13px;
+
+  color: var(--texto-secundario);
+}
+
+
+/* COLORES DE TARJETAS */
+
+.stat-productos {
+  background-color: var(--morado-claro);
+}
+
+.stat-categorias {
+  background-color: var(--azul-suave);
+}
+
+.stat-ventas {
+  background-color: var(--verde-suave);
+}
+
+.stat-clientes {
+  background-color: var(--coral-suave);
+}
+
+
+/* =========================================================
+   PRODUCTOS RECIENTES
+========================================================= */
+
+.recent-products {
+  background-color: var(--blanco);
+
+  border: 1px solid var(--borde);
+
+  border-radius: 15px;
+
+  padding: 28px;
+
+  transition: box-shadow 0.25s ease;
+}
+
+.recent-products:hover {
+  box-shadow: 0 8px 24px rgba(20, 33, 61, 0.06);
+}
+
+
+/* =========================================================
+   CABECERA DE PRODUCTOS RECIENTES
+========================================================= */
+
+.recent-products-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 25px;
+}
+
+.recent-products-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+}
+
+.recent-icon {
+  font-size: 27px;
+}
+
+.recent-products-title h2 {
+  margin: 0;
+
+  font-size: 21px;
+}
+
+.recent-products-title p {
+  margin: 5px 0 0;
+
+  color: var(--texto-secundario);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   BOTÓN REGISTRAR PRODUCTO
+========================================================= */
+
+.register-product-button {
+  border: 1px solid var(--morado);
+
+  background-color: var(--morado);
+
+  color: var(--blanco);
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.register-product-button:hover {
+  background-color: #435dc0;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 5px 12px rgba(82, 111, 214, 0.25);
+}
+
+
+/* =========================================================
+   TABLA DEL DASHBOARD
+========================================================= */
+
+.dashboard-table-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.dashboard-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 850px;
+}
+
+.dashboard-table thead {
+  background-color: var(--morado-suave);
+}
+
+.dashboard-table th {
+  padding: 15px 18px;
+
+  text-align: left;
+
+  color: var(--texto);
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+}
+
+.dashboard-table th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.dashboard-table th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.dashboard-table td {
+  padding: 17px 18px;
+
+  border-bottom: 1px solid #edf0f5;
+
+  color: var(--texto);
+
+  font-size: 14px;
+}
+
+.dashboard-table tbody tr {
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: #fafaff;
+}
+
+.dashboard-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   DATOS ESPECIALES DE LA TABLA
+========================================================= */
+
+.product-name {
+  font-weight: bold;
+}
+
+.product-price {
+  font-weight: bold;
+}
+
+
+/* CATEGORÍA */
+
+.category-badge {
+  display: inline-block;
+
+  padding: 6px 12px;
+
+  border-radius: 7px;
+
+  color: var(--morado);
+
+  background-color: var(--morado-suave);
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+
+/* OFERTAS */
+
+.offer-badge {
+  display: inline-block;
+
+  min-width: 78px;
+
+  padding: 6px 10px;
+
+  border-radius: 7px;
+
+  text-align: center;
+
+  font-size: 13px;
+}
+
+.has-offer {
+  color: var(--verde);
+
+  background-color: var(--verde-suave);
+
+  font-weight: bold;
+}
+
+.no-offer {
+  color: var(--texto-secundario);
+
+  background-color: #f1f3f7;
+}
+
+
+/* =========================================================
+   PIE DE PRODUCTOS RECIENTES
+========================================================= */
+
+.recent-products-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-top: 20px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid var(--borde);
+}
+
+.recent-products-footer span {
+  color: var(--texto-secundario);
+
+  font-size: 13px;
+}
+
+.view-products-button {
+  border: none;
+
+  background-color: transparent;
+
+  color: var(--morado);
+
+  font-weight: bold;
+
+  padding: 8px;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.view-products-button:hover {
+  color: #334db7;
+
+  transform: translateX(4px);
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.login-fondo {
+  min-height: 100vh;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 30px;
+
+  background-color: var(--fondo);
+}
+
+.login-card {
+  width: 100%;
+
+  max-width: 390px;
+
+  background-color: var(--blanco);
+
+  padding: 40px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 12px;
+
+  box-shadow: 0 8px 25px rgba(20, 33, 61, 0.08);
+}
+
+.login-logo {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0 auto 15px;
+
+  border-radius: 50%;
+
+  background-color: var(--morado-claro);
+
+  font-size: 32px;
+}
+
+.login-card h1 {
+  margin: 0;
+
+  text-align: center;
+
+  font-size: 29px;
+}
+
+.login-card > p {
+  margin: 8px 0 30px;
+
+  text-align: center;
+
+  color: var(--texto-secundario);
+}
+
+.campo-login {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-bottom: 20px;
+}
+
+.campo-login label {
+  font-size: 14px;
+
+  font-weight: bold;
+}
+
+.campo-login input {
+  width: 100%;
+
+  padding: 13px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 6px;
+
+  background-color: #f4f5f9;
+
+  outline: none;
+
+  transition: border-color 0.2s ease;
+}
+
+.campo-login input:focus {
+  border-color: var(--morado);
+}
+
+.recordarme {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 18px;
+
+  font-size: 14px;
+}
+
+.btn-login {
+  width: 100%;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background-color: var(--morado);
+
+  color: white;
+
+  font-weight: bold;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-login:hover {
+  background-color: #435dc0;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   TÍTULOS DE LAS OTRAS PÁGINAS
+========================================================= */
+
+.titulo {
+  margin-bottom: 35px;
+}
+
+.titulo h1 {
+  margin: 0;
+
+  font-size: 34px;
+
+  color: var(--texto);
+}
+
+.titulo p {
+  margin-top: 8px;
+
+  color: var(--texto-secundario);
+}
+
+
+/* =========================================================
+   FORMULARIO DE PRODUCTO
+========================================================= */
+
+.formulario-producto {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 35px;
+
+  padding: 32px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 14px;
+
+  background-color: var(--blanco);
+}
+
+.campo {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.campo label {
+  color: var(--texto);
+
+  font-size: 14px;
+
+  font-weight: bold;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 7px;
+
+  background-color: #f4f5f9;
+
+  color: var(--texto);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--morado);
+
+  background-color: var(--blanco);
+}
+
+.descripcion {
+  grid-column: 1 / 3;
+}
+
+.descripcion textarea {
+  min-height: 100px;
+
+  resize: vertical;
+}
+
+
+/* =========================================================
+   BOTONES DE FORMULARIO
+========================================================= */
+
+.botones {
+  grid-column: 2 / 4;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: flex-end;
+
+  gap: 18px;
+}
+
+.btn-cancelar,
+.btn-guardar {
+  padding: 13px 30px;
+
+  border-radius: 7px;
+
+  font-weight: bold;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.btn-cancelar {
+  border: 1px solid var(--morado-claro);
+
+  background-color: var(--morado-suave);
+
+  color: var(--morado);
+}
+
+.btn-cancelar:hover {
+  transform: translateY(-2px);
+}
+
+.btn-guardar {
+  border: none;
+
+  background-color: var(--morado);
+
+  color: var(--blanco);
+}
+
+.btn-guardar:hover {
+  background-color: #435dc0;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   CATEGORÍA / OFERTA / CLIENTE
+========================================================= */
+
+.pagina-doble {
+  display: grid;
+
+  grid-template-columns: 340px 1fr;
+
+  gap: 35px;
+
+  align-items: start;
+}
+
+.formulario-simple,
+.tabla-caja {
+  background-color: var(--blanco);
+
+  border: 1px solid var(--borde);
+
+  border-radius: 12px;
+
+  padding: 25px;
+}
+
+.formulario-simple h2,
+.tabla-caja h2 {
+  margin-top: 0;
+
+  font-size: 20px;
+}
+
+.formulario-simple .campo {
+  margin-bottom: 20px;
+}
+
+.formulario-simple textarea {
+  min-height: 100px;
+
+  resize: vertical;
+}
+
+.tabla-caja table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.tabla-caja th {
+  padding: 14px;
+
+  text-align: left;
+
+  background-color: var(--morado-suave);
+
+  font-size: 13px;
+}
+
+.tabla-caja td {
+  padding: 14px;
+
+  border-bottom: 1px solid var(--borde);
+
+  font-size: 14px;
+}
+
+.tabla-caja tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-completa {
+  width: 100%;
+}
+
+
+/* =========================================================
+   EDITAR / ELIMINAR
+========================================================= */
+
+.btn-editar,
+.btn-eliminar {
+  padding: 7px 10px;
+
+  border-radius: 5px;
+
+  background-color: white;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.btn-editar {
+  margin-right: 5px;
+
+  border: 1px solid var(--morado);
+
+  color: var(--morado);
+}
+
+.btn-eliminar {
+  border: 1px solid var(--coral);
+
+  color: var(--coral);
+}
+
+.btn-editar:hover {
+  background-color: var(--morado-suave);
+
+  transform: translateY(-1px);
+}
+
+.btn-eliminar:hover {
+  background-color: var(--coral-suave);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   VENTAS
+========================================================= */
+
+.ventas-resumen {
+  max-width: 650px;
+
+  margin-bottom: 35px;
+}
+
+
+/* =========================================================
+   FECHA DE OTRAS PÁGINAS
+========================================================= */
+
+.fecha {
+  margin-top: 35px;
+
+  color: var(--texto-secundario);
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   BOTÓN HAMBURGUESA
+   Lo utilizaremos al modificar Navbar.jsx
+========================================================= */
+
+.menu-toggle {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid var(--borde);
+
+  border-radius: 7px;
+
+  background-color: var(--blanco);
+
+  color: var(--texto);
+
+  font-size: 24px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .navbar {
+    padding-left: 20px;
+    padding-right: 20px;
+
+    gap: 15px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .menu button {
+    padding: 12px 9px;
+
+    font-size: 13px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .formulario-producto {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .descripcion {
+    grid-column: 1 / 3;
+  }
+
+  .botones {
+    grid-column: 1 / 3;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MENÚ MÓVIL
+========================================================= */
+
+@media (max-width: 850px) {
+
+  .navbar {
+    min-height: 72px;
+
+    flex-wrap: wrap;
+
+    padding: 14px 20px;
+  }
+
+  .menu-toggle {
+    display: flex;
+
+    margin-left: auto;
+  }
+
+  /*
+     Estas reglas quedarán listas para cuando
+     agreguemos el botón hamburguesa en Navbar.jsx.
+  */
+
+  .menu {
+    display: none;
+
+    width: 100%;
+
+    order: 4;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 5px;
+
+    padding-top: 10px;
+  }
+
+  .menu.abierto {
+    display: flex;
+  }
+
+  .menu button {
+    width: 100%;
+
+    text-align: left;
+
+    padding: 13px 15px;
+  }
+
+  .menu button.activo::after {
+    display: none;
+  }
+
+  .cerrar-sesion {
+    display: none;
+  }
+
+  .contenido {
+    padding: 30px 22px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .dashboard-date {
+    width: 100%;
+
+    justify-content: flex-start;
+  }
+
+  .pagina-doble {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - CELULAR
+========================================================= */
+
+@media (max-width: 600px) {
+  .contenido {
+    padding: 25px 15px;
+  }
+  .dashboard-title h1 {
+    font-size: 29px;
+  }
+  .dashboard-title p {
+    font-size: 14px;
+  }
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+  }
+  .stat-card {
+    min-height: 115px;
+
+    padding: 20px;
+  }
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+  .stat-info h2 {
+    font-size: 29px;
+  }
+  .recent-products {
+    padding: 18px;
+  }
+  .recent-products-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+  .register-product-button {
+    width: 100%;
+  }
+  .recent-products-footer {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+  .formulario-producto {
+    grid-template-columns: 1fr;
+
+    gap: 22px;
+
+    padding: 20px;
+  }
+  .descripcion {
+    grid-column: 1;
+  }
+  .botones {
+    grid-column: 1;
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+  .btn-cancelar,
+  .btn-guardar {
+    width: 100%;
+  }
+  .login-card {
+    padding: 30px 25px;
+  }
+
+}
+
+/* Cerrar sesión dentro del menú móvil */
+.cerrar-sesion-mobile {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  .cerrar-sesion-mobile {
+    display: block !important;
+
+    margin-top: 8px;
+
+    color: var(--coral) !important;
+
+    border-top: 1px solid var(--borde) !important;
+
+    border-radius: 0 !important;
+  }
+
+  .cerrar-sesion-mobile:hover {
+    background-color: var(--coral-suave) !important;
+  }
+
+}

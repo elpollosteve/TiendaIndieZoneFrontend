@@ -1,59 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api/api";
 import Alerta from "../../components/utils/Alerta";
 import "./ventas.css";
 
-function Ventas({ setPagina }) {
+function Ventas({ setPagina, setVentaSeleccionada }) {
   const [venta, setVenta] = useState({
     fecha_venta: "",
     total_venta: "",
     id_cliente: ""
   });
 
+  const [ventas, setVentas] = useState([]);
+  const [clientes, setClientes] = useState([]);
+
+  const [busqueda, setBusqueda] = useState("");
+  const [cargando, setCargando] = useState(true);
+
   const [alerta, setAlerta] = useState({
     tipo: "",
     mensaje: ""
   });
 
-  // Datos temporales
-  const clientes = [
-    {
-      id_cliente: 1,
-      nombre: "Carlos",
-      apellido: "Ramírez"
-    },
-    {
-      id_cliente: 2,
-      nombre: "María",
-      apellido: "Torres"
-    },
-    {
-      id_cliente: 3,
-      nombre: "Luis",
-      apellido: "Fernández"
-    }
-  ];
+  // Obtener datos
+  const cargarDatos = async () => {
+    setCargando(true);
 
-  const ventas = [
-    {
-      id_venta: 10,
-      fecha_venta: "2026-08-10",
-      total_venta: "120.90",
-      id_cliente: 1
-    },
-    {
-      id_venta: 9,
-      fecha_venta: "2026-08-09",
-      total_venta: "85.50",
-      id_cliente: 2
-    },
-    {
-      id_venta: 8,
-      fecha_venta: "2026-08-08",
-      total_venta: "160.00",
-      id_cliente: 3
-    }
-  ];
+    try {
+      const [
+        respuestaVentas,
+        respuestaClientes
+      ] = await Promise.all([
+        api.get("/ventas/"),
+        api.get("/clientes/")
+      ]);
 
+      setVentas(respuestaVentas.data);
+      setClientes(respuestaClientes.data);
+
+    } catch (error) {
+      console.error(error);
+
+      setVentas([]);
+      setClientes([]);
+
+      setAlerta({
+        tipo: "danger",
+        mensaje: "No se pudo obtener la información de ventas."
+      });
+
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  // Cambiar campos
   const cambiarDato = (e) => {
     setVenta({
       ...venta,
@@ -61,31 +65,63 @@ function Ventas({ setPagina }) {
     });
   };
 
+  // Limpiar formulario
   const limpiarFormulario = () => {
     setVenta({
       fecha_venta: "",
       total_venta: "",
       id_cliente: ""
     });
-
-    setAlerta({
-      tipo: "",
-      mensaje: ""
-    });
   };
 
-  const guardarVenta = (e) => {
+  // Error del backend
+  const obtenerMensajeError = (error) => {
+    const detalle = error.response?.data?.detail;
+
+    if (typeof detalle === "string") {
+      return detalle;
+    }
+
+    if (Array.isArray(detalle) && detalle.length > 0) {
+      return detalle[0].msg.replace("Value error, ", "");
+    }
+
+    return "No se pudo completar la operación.";
+  };
+
+  // Registrar venta
+  const guardarVenta = async (e) => {
     e.preventDefault();
 
-    // Luego aquí irá el POST al backend
-    console.log(venta);
+    const datos = {
+      fecha_venta: venta.fecha_venta,
+      total_venta: Number(venta.total_venta),
+      id_cliente: Number(venta.id_cliente)
+    };
 
-    setAlerta({
-      tipo: "success",
-      mensaje: "Venta preparada correctamente."
-    });
+    try {
+      await api.post(
+        "/ventas/",
+        datos
+      );
+
+      setAlerta({
+        tipo: "success",
+        mensaje: "Venta registrada correctamente."
+      });
+
+      limpiarFormulario();
+      await cargarDatos();
+
+    } catch (error) {
+      setAlerta({
+        tipo: "danger",
+        mensaje: obtenerMensajeError(error)
+      });
+    }
   };
 
+  // Nombre del cliente
   const obtenerCliente = (idCliente) => {
     const cliente = clientes.find(
       (item) => item.id_cliente === idCliente
@@ -98,6 +134,7 @@ function Ventas({ setPagina }) {
     return `${cliente.nombre} ${cliente.apellido}`;
   };
 
+  // Mostrar fecha
   const mostrarFecha = (fecha) => {
     if (!fecha) {
       return "-";
@@ -105,14 +142,68 @@ function Ventas({ setPagina }) {
 
     const partes = fecha.split("-");
 
+    if (partes.length !== 3) {
+      return fecha;
+    }
+
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
   };
+
+  // Ver detalle
+  const verDetalle = (item) => {
+    setVentaSeleccionada({
+      ...item,
+      nombre_cliente: obtenerCliente(item.id_cliente)
+    });
+
+    setPagina("detalleVenta");
+  };
+
+  // Buscar ventas
+  const ventasFiltradas = ventas.filter((item) => {
+    const texto = busqueda.toLowerCase();
+
+    const cliente = obtenerCliente(
+      item.id_cliente
+    ).toLowerCase();
+
+    const total = String(
+      item.total_venta
+    ).toLowerCase();
+
+    return (
+      cliente.includes(texto) ||
+      total.includes(texto)
+    );
+  });
+
+  // Total vendido
+  const totalVendido = ventas.reduce(
+    (total, item) =>
+      total + Number(item.total_venta),
+    0
+  );
+
+  // Ventas del mes
+  const fechaActual = new Date();
+
+  const ventasMes = ventas.filter((item) => {
+    const fecha = new Date(
+      `${item.fecha_venta}T00:00:00`
+    );
+
+    return (
+      fecha.getMonth() === fechaActual.getMonth() &&
+      fecha.getFullYear() === fechaActual.getFullYear()
+    );
+  }).length;
 
   return (
     <div className="container-fluid p-0">
 
       {/* Título */}
       <div className="mb-4">
+
         <h1 className="fw-bold display-6 mb-1">
           Gestión de Ventas
         </h1>
@@ -120,6 +211,7 @@ function Ventas({ setPagina }) {
         <p className="text-secondary fs-5 mb-0">
           Registra y consulta las ventas de IndieZone
         </p>
+
       </div>
 
       {/* Alerta */}
@@ -138,7 +230,9 @@ function Ventas({ setPagina }) {
       <div className="row g-3 mb-4">
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -146,21 +240,27 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
+
                 <h3 className="fw-bold mb-0">
-                  156
+                  {ventas.length}
                 </h3>
 
                 <span className="text-secondary">
                   Ventas realizadas
                 </span>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -168,21 +268,27 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
+
                 <h3 className="fw-bold mb-0">
-                  S/. 850.50
+                  S/. {totalVendido.toFixed(2)}
                 </h3>
 
                 <span className="text-secondary">
                   Total vendido
                 </span>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-warning-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -190,17 +296,21 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
+
                 <h3 className="fw-bold mb-0">
-                  10
+                  {ventasMes}
                 </h3>
 
                 <span className="text-secondary">
                   Ventas este mes
                 </span>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
       </div>
@@ -217,12 +327,15 @@ function Ventas({ setPagina }) {
               <div className="d-flex align-items-center gap-3">
 
                 <div className="ventas-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+
                   <span className="fs-2">
                     🧾
                   </span>
+
                 </div>
 
                 <div>
+
                   <h4 className="fw-bold mb-1">
                     Nueva venta
                   </h4>
@@ -230,6 +343,7 @@ function Ventas({ setPagina }) {
                   <small className="text-secondary">
                     Completa los datos de la venta
                   </small>
+
                 </div>
 
               </div>
@@ -243,32 +357,31 @@ function Ventas({ setPagina }) {
                 {/* Cliente */}
                 <div className="mb-3">
 
-                  <label
-                    htmlFor="id_cliente"
-                    className="form-label fw-semibold"
-                  >
+                  <label className="form-label fw-semibold">
                     Cliente *
                   </label>
 
                   <select
                     className="form-select"
-                    id="id_cliente"
                     name="id_cliente"
                     value={venta.id_cliente}
                     onChange={cambiarDato}
                     required
                   >
+
                     <option value="">
                       Seleccionar cliente
                     </option>
 
                     {clientes.map((cliente) => (
+
                       <option
                         key={cliente.id_cliente}
                         value={cliente.id_cliente}
                       >
                         {cliente.nombre} {cliente.apellido}
                       </option>
+
                     ))}
 
                   </select>
@@ -278,17 +391,13 @@ function Ventas({ setPagina }) {
                 {/* Fecha */}
                 <div className="mb-3">
 
-                  <label
-                    htmlFor="fecha_venta"
-                    className="form-label fw-semibold"
-                  >
+                  <label className="form-label fw-semibold">
                     Fecha de venta *
                   </label>
 
                   <input
                     type="date"
                     className="form-control"
-                    id="fecha_venta"
                     name="fecha_venta"
                     value={venta.fecha_venta}
                     onChange={cambiarDato}
@@ -300,10 +409,7 @@ function Ventas({ setPagina }) {
                 {/* Total */}
                 <div className="mb-4">
 
-                  <label
-                    htmlFor="total_venta"
-                    className="form-label fw-semibold"
-                  >
+                  <label className="form-label fw-semibold">
                     Total de venta *
                   </label>
 
@@ -316,10 +422,9 @@ function Ventas({ setPagina }) {
                     <input
                       type="number"
                       className="form-control"
-                      id="total_venta"
                       name="total_venta"
-                      placeholder="0.00"
-                      min="0"
+                      placeholder="Ej. 120.90"
+                      min="0.01"
                       step="0.01"
                       value={venta.total_venta}
                       onChange={cambiarDato}
@@ -358,7 +463,7 @@ function Ventas({ setPagina }) {
 
         </div>
 
-        {/* Tabla */}
+        {/* Lista */}
         <div className="col-12 col-lg-8">
 
           <div className="card border-0 shadow-sm rounded-4">
@@ -369,31 +474,36 @@ function Ventas({ setPagina }) {
 
                 <div className="col">
 
-                  <div className="d-flex align-items-center gap-3">
+                  <h4 className="fw-bold mb-1">
+                    Ventas registradas
+                  </h4>
 
-                    <span className="fs-2">
-                      📋
-                    </span>
-
-                    <div>
-                      <h4 className="fw-bold mb-1">
-                        Ventas registradas
-                      </h4>
-
-                      <small className="text-secondary">
-                        Historial de ventas del sistema
-                      </small>
-                    </div>
-
-                  </div>
+                  <small className="text-secondary">
+                    Total: {ventas.length}
+                  </small>
 
                 </div>
 
-                <div className="col-12 col-sm-auto">
+                {/* Buscar */}
+                <div className="col-12 col-md-6">
 
-                  <span className="badge bg-success-subtle text-success fs-6">
-                    {ventas.length} ventas
-                  </span>
+                  <div className="input-group">
+
+                    <span className="input-group-text">
+                      🔍
+                    </span>
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Buscar por cliente o precio"
+                      value={busqueda}
+                      onChange={(e) =>
+                        setBusqueda(e.target.value)
+                      }
+                    />
+
+                  </div>
 
                 </div>
 
@@ -414,8 +524,9 @@ function Ventas({ setPagina }) {
                       <th>Cliente</th>
                       <th>Fecha</th>
                       <th>Total</th>
+
                       <th className="text-center">
-                        Acciones
+                        Acción
                       </th>
                     </tr>
 
@@ -423,58 +534,90 @@ function Ventas({ setPagina }) {
 
                   <tbody>
 
-                    {ventas.map((item) => (
+                    {/* Cargando */}
+                    {cargando && (
 
-                      <tr key={item.id_venta}>
+                      <tr>
 
-                        <td className="text-secondary">
-                          #{item.id_venta}
+                        <td
+                          colSpan="5"
+                          className="text-center text-secondary py-4"
+                        >
+                          Cargando ventas...
                         </td>
 
-                        <td className="fw-semibold">
-                          {obtenerCliente(item.id_cliente)}
-                        </td>
+                      </tr>
 
-                        <td>
-                          {mostrarFecha(item.fecha_venta)}
-                        </td>
+                    )}
 
-                        <td>
+                    {/* Ventas */}
+                    {!cargando &&
+                      ventasFiltradas.map((item) => (
 
-                          <span className="badge bg-success-subtle text-success">
-                            S/. {item.total_venta}
-                          </span>
+                        <tr key={item.id_venta}>
 
-                        </td>
+                          <td>
+                            #{item.id_venta}
+                          </td>
 
-                        <td>
+                          <td className="fw-semibold">
+                            {obtenerCliente(
+                              item.id_cliente
+                            )}
+                          </td>
 
-                          <div className="d-flex justify-content-center gap-2">
+                          <td>
+                            {mostrarFecha(
+                              item.fecha_venta
+                            )}
+                          </td>
+
+                          <td>
+
+                            <span className="badge bg-success-subtle text-success fs-6">
+                              S/. {Number(
+                                item.total_venta
+                              ).toFixed(2)}
+                            </span>
+
+                          </td>
+
+                          <td className="text-center">
 
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-primary"
                               onClick={() =>
-                                setPagina("detalleVenta")
+                                verDetalle(item)
                               }
                             >
                               👁 Ver detalle
                             </button>
 
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-danger"
-                            >
-                              🗑️ Eliminar
-                            </button>
+                          </td>
 
-                          </div>
+                        </tr>
 
-                        </td>
+                      ))}
 
-                      </tr>
+                    {/* Sin resultados */}
+                    {!cargando &&
+                      ventasFiltradas.length === 0 && (
 
-                    ))}
+                        <tr>
+
+                          <td
+                            colSpan="5"
+                            className="text-center text-secondary py-4"
+                          >
+                            {busqueda
+                              ? "No se encontraron ventas."
+                              : "No hay ventas registradas."}
+                          </td>
+
+                        </tr>
+
+                      )}
 
                   </tbody>
 
@@ -493,4 +636,5 @@ function Ventas({ setPagina }) {
     </div>
   );
 }
+
 export default Ventas;

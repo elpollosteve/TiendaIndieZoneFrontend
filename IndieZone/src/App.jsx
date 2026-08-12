@@ -1,9 +1,7 @@
 import { useState } from "react";
 
-// Componentes
 import Navbar from "./components/navbar/Navbar";
 
-// Páginas
 import Login from "./pages/login/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RegistroProducto from "./pages/productos/RegistroProducto";
@@ -17,6 +15,11 @@ import Reportes from "./pages/reportes/Reportes";
 function App() {
   const [sesionIniciada, setSesionIniciada] = useState(false);
   const [pagina, setPagina] = useState("dashboard");
+
+  const [
+    ventaSeleccionada,
+    setVentaSeleccionada
+  ] = useState(null);
 
   // Login
   if (!sesionIniciada) {
@@ -41,11 +44,15 @@ function App() {
       <main className="container-fluid px-3 px-md-4 px-lg-5 py-4">
 
         {pagina === "dashboard" && (
-          <Dashboard setPagina={setPagina} />
+          <Dashboard
+            setPagina={setPagina}
+          />
         )}
 
         {pagina === "producto" && (
-          <RegistroProducto setPagina={setPagina} />
+          <RegistroProducto
+            setPagina={setPagina}
+          />
         )}
 
         {pagina === "categoria" && (
@@ -61,11 +68,21 @@ function App() {
         )}
 
         {pagina === "ventas" && (
-          <Ventas setPagina={setPagina} />
+          <Ventas
+            setPagina={setPagina}
+            setVentaSeleccionada={
+              setVentaSeleccionada
+            }
+          />
         )}
 
         {pagina === "detalleVenta" && (
-          <DetalleVenta setPagina={setPagina} />
+          <DetalleVenta
+            setPagina={setPagina}
+            ventaSeleccionada={
+              ventaSeleccionada
+            }
+          />
         )}
 
         {pagina === "reportes" && (
@@ -77,4 +94,5 @@ function App() {
     </div>
   );
 }
+
 export default App;

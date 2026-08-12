@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api/api";
 import Alerta from "../../components/utils/Alerta";
 import "./detalleVenta.css";
 
-function DetalleVenta({ setPagina }) {
+function DetalleVenta({
+  setPagina,
+  ventaSeleccionada
+}) {
   const [detalle, setDetalle] = useState({
     id_producto: "",
     cantidad: "",
@@ -10,49 +14,65 @@ function DetalleVenta({ setPagina }) {
     subtotal: ""
   });
 
+  const [detalles, setDetalles] = useState([]);
+  const [productos, setProductos] = useState([]);
+
+  const [cargando, setCargando] = useState(true);
+
   const [alerta, setAlerta] = useState({
     tipo: "",
     mensaje: ""
   });
 
-  // Datos temporales
-  const productos = [
-    {
-      id_producto: 1,
-      nombre_producto: "Hollow Knight",
-      precio: "40.90"
-    },
-    {
-      id_producto: 2,
-      nombre_producto: "Celeste",
-      precio: "50.90"
-    },
-    {
-      id_producto: 3,
-      nombre_producto: "Stardew Valley",
-      precio: "30.50"
+  // Obtener datos
+  const cargarDatos = async () => {
+    if (!ventaSeleccionada) {
+      setCargando(false);
+      return;
     }
-  ];
 
-  const detalles = [
-    {
-      id_venta: 10,
-      id_producto: 1,
-      nombre_producto: "Hollow Knight",
-      cantidad: 2,
-      precio_unitario: "40.90",
-      subtotal: "81.80"
-    },
-    {
-      id_venta: 10,
-      id_producto: 3,
-      nombre_producto: "Stardew Valley",
-      cantidad: 1,
-      precio_unitario: "39.10",
-      subtotal: "39.10"
+    setCargando(true);
+
+    try {
+      const [
+        respuestaDetalles,
+        respuestaProductos
+      ] = await Promise.all([
+        api.get("/detalle-ventas/"),
+        api.get("/productos/")
+      ]);
+
+      const detallesVenta =
+        respuestaDetalles.data.filter(
+          (item) =>
+            item.id_venta ===
+            ventaSeleccionada.id_venta
+        );
+
+      setDetalles(detallesVenta);
+      setProductos(respuestaProductos.data);
+
+    } catch (error) {
+      console.error(error);
+
+      setDetalles([]);
+      setProductos([]);
+
+      setAlerta({
+        tipo: "danger",
+        mensaje: "No se pudo obtener el detalle de la venta."
+      });
+
+    } finally {
+      setCargando(false);
     }
-  ];
+  };
 
+  useEffect(() => {
+    cargarDatos();
+  }, [ventaSeleccionada]);
+
+  // Cambiar campos
   const cambiarDato = (e) => {
     setDetalle({
       ...detalle,
@@ -60,6 +80,48 @@ function DetalleVenta({ setPagina }) {
     });
   };
 
+  // Seleccionar producto
+  const cambiarProducto = (e) => {
+    const idProducto = e.target.value;
+
+    const producto = productos.find(
+      (item) =>
+        item.id_producto === Number(idProducto)
+    );
+
+    setDetalle({
+      ...detalle,
+      id_producto: idProducto,
+      precio_unitario: producto
+        ? Number(producto.precio).toFixed(2)
+        : "",
+      subtotal: ""
+    });
+  };
+
+  // Cambiar cantidad
+  const cambiarCantidad = (e) => {
+    const cantidad = e.target.value;
+
+    const precio = Number(
+      detalle.precio_unitario
+    );
+
+    const subtotal =
+      cantidad && precio
+        ? (
+            Number(cantidad) * precio
+          ).toFixed(2)
+        : "";
+
+    setDetalle({
+      ...detalle,
+      cantidad: cantidad,
+      subtotal: subtotal
+    });
+  };
+
+  // Limpiar
   const limpiarFormulario = () => {
     setDetalle({
       id_producto: "",
@@ -67,24 +129,110 @@ function DetalleVenta({ setPagina }) {
       precio_unitario: "",
       subtotal: ""
     });
-
-    setAlerta({
-      tipo: "",
-      mensaje: ""
-    });
   };
 
-  const guardarDetalle = (e) => {
+  // Error del backend
+  const obtenerMensajeError = (error) => {
+    const detalleError =
+      error.response?.data?.detail;
+
+    if (typeof detalleError === "string") {
+      return detalleError;
+    }
+
+    if (
+      Array.isArray(detalleError) &&
+      detalleError.length > 0
+    ) {
+      return detalleError[0].msg.replace(
+        "Value error, ",
+        ""
+      );
+    }
+
+    return "No se pudo completar la operación.";
+  };
+
+  // Guardar detalle
+  const guardarDetalle = async (e) => {
     e.preventDefault();
 
-    // Luego aquí irá el POST al backend
-    console.log(detalle);
+    if (!ventaSeleccionada) {
+      return;
+    }
 
-    setAlerta({
-      tipo: "success",
-      mensaje: "Detalle preparado correctamente."
-    });
+    const datos = {
+      id_venta: ventaSeleccionada.id_venta,
+      id_producto: Number(
+        detalle.id_producto
+      ),
+      cantidad: Number(
+        detalle.cantidad
+      ),
+      precio_unitario: Number(
+        detalle.precio_unitario
+      ),
+      subtotal: Number(
+        detalle.subtotal
+      )
+    };
+
+    try {
+      await api.post(
+        "/detalle-ventas/",
+        datos
+      );
+
+      setAlerta({
+        tipo: "success",
+        mensaje: "Producto agregado a la venta correctamente."
+      });
+
+      limpiarFormulario();
+      await cargarDatos();
+
+    } catch (error) {
+      setAlerta({
+        tipo: "danger",
+        mensaje: obtenerMensajeError(error)
+      });
+    }
   };
+
+  // Nombre del producto
+  const obtenerProducto = (idProducto) => {
+    const producto = productos.find(
+      (item) =>
+        item.id_producto === idProducto
+    );
+
+    return producto
+      ? producto.nombre_producto
+      : "Producto no encontrado";
+  };
+
+  // Sin venta seleccionada
+  if (!ventaSeleccionada) {
+    return (
+      <div className="container-fluid p-0">
+
+        <div className="alert alert-warning">
+          No hay una venta seleccionada.
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-outline-secondary"
+          onClick={() =>
+            setPagina("ventas")
+          }
+        >
+          ← Volver a Ventas
+        </button>
+
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid p-0">
@@ -93,6 +241,7 @@ function DetalleVenta({ setPagina }) {
       <div className="row align-items-center g-3 mb-4">
 
         <div className="col">
+
           <h1 className="fw-bold display-6 mb-1">
             Detalle de Venta
           </h1>
@@ -100,16 +249,21 @@ function DetalleVenta({ setPagina }) {
           <p className="text-secondary fs-5 mb-0">
             Productos incluidos en la venta
           </p>
+
         </div>
 
         <div className="col-12 col-sm-auto">
+
           <button
             type="button"
             className="btn btn-outline-secondary"
-            onClick={() => setPagina("ventas")}
+            onClick={() =>
+              setPagina("ventas")
+            }
           >
             ← Volver a Ventas
           </button>
+
         </div>
 
       </div>
@@ -130,7 +284,9 @@ function DetalleVenta({ setPagina }) {
       <div className="row g-3 mb-4">
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -138,21 +294,27 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
+
                 <small className="text-secondary">
                   Venta
                 </small>
 
                 <h3 className="fw-bold mb-0">
-                  #10
+                  #{ventaSeleccionada.id_venta}
                 </h3>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-info-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -160,21 +322,27 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
+
                 <small className="text-secondary">
                   Cliente
                 </small>
 
                 <h5 className="fw-bold mb-0">
-                  Carlos Ramírez
+                  {ventaSeleccionada.nombre_cliente}
                 </h5>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
         <div className="col-12 col-md-4">
+
           <div className="card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
+
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -182,17 +350,23 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
+
                 <small className="text-secondary">
                   Total
                 </small>
 
                 <h3 className="fw-bold mb-0">
-                  S/. 120.90
+                  S/. {Number(
+                    ventaSeleccionada.total_venta
+                  ).toFixed(2)}
                 </h3>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
 
       </div>
@@ -209,12 +383,15 @@ function DetalleVenta({ setPagina }) {
               <div className="d-flex align-items-center gap-3">
 
                 <div className="detalle-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+
                   <span className="fs-2">
                     🎮
                   </span>
+
                 </div>
 
                 <div>
+
                   <h4 className="fw-bold mb-1">
                     Agregar producto
                   </h4>
@@ -222,6 +399,7 @@ function DetalleVenta({ setPagina }) {
                   <small className="text-secondary">
                     Completa los datos del detalle
                   </small>
+
                 </div>
 
               </div>
@@ -235,32 +413,31 @@ function DetalleVenta({ setPagina }) {
                 {/* Producto */}
                 <div className="mb-3">
 
-                  <label
-                    htmlFor="id_producto"
-                    className="form-label fw-semibold"
-                  >
+                  <label className="form-label fw-semibold">
                     Producto *
                   </label>
 
                   <select
                     className="form-select"
-                    id="id_producto"
                     name="id_producto"
                     value={detalle.id_producto}
-                    onChange={cambiarDato}
+                    onChange={cambiarProducto}
                     required
                   >
+
                     <option value="">
                       Seleccionar producto
                     </option>
 
                     {productos.map((producto) => (
+
                       <option
                         key={producto.id_producto}
                         value={producto.id_producto}
                       >
                         {producto.nombre_producto}
                       </option>
+
                     ))}
 
                   </select>
@@ -270,22 +447,18 @@ function DetalleVenta({ setPagina }) {
                 {/* Cantidad */}
                 <div className="mb-3">
 
-                  <label
-                    htmlFor="cantidad"
-                    className="form-label fw-semibold"
-                  >
+                  <label className="form-label fw-semibold">
                     Cantidad *
                   </label>
 
                   <input
                     type="number"
                     className="form-control"
-                    id="cantidad"
                     name="cantidad"
                     placeholder="Ej. 2"
                     min="1"
                     value={detalle.cantidad}
-                    onChange={cambiarDato}
+                    onChange={cambiarCantidad}
                     required
                   />
 
@@ -294,11 +467,8 @@ function DetalleVenta({ setPagina }) {
                 {/* Precio */}
                 <div className="mb-3">
 
-                  <label
-                    htmlFor="precio_unitario"
-                    className="form-label fw-semibold"
-                  >
-                    Precio unitario *
+                  <label className="form-label fw-semibold">
+                    Precio unitario
                   </label>
 
                   <div className="input-group">
@@ -310,14 +480,10 @@ function DetalleVenta({ setPagina }) {
                     <input
                       type="number"
                       className="form-control"
-                      id="precio_unitario"
                       name="precio_unitario"
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
                       value={detalle.precio_unitario}
                       onChange={cambiarDato}
-                      required
+                      readOnly
                     />
 
                   </div>
@@ -327,11 +493,8 @@ function DetalleVenta({ setPagina }) {
                 {/* Subtotal */}
                 <div className="mb-4">
 
-                  <label
-                    htmlFor="subtotal"
-                    className="form-label fw-semibold"
-                  >
-                    Subtotal *
+                  <label className="form-label fw-semibold">
+                    Subtotal
                   </label>
 
                   <div className="input-group">
@@ -343,14 +506,10 @@ function DetalleVenta({ setPagina }) {
                     <input
                       type="number"
                       className="form-control"
-                      id="subtotal"
                       name="subtotal"
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
                       value={detalle.subtotal}
                       onChange={cambiarDato}
-                      required
+                      readOnly
                     />
 
                   </div>
@@ -385,44 +544,20 @@ function DetalleVenta({ setPagina }) {
 
         </div>
 
-        {/* Tabla */}
+        {/* Lista */}
         <div className="col-12 col-lg-8">
 
           <div className="card border-0 shadow-sm rounded-4">
 
             <div className="card-header bg-white border-0 p-4">
 
-              <div className="row align-items-center g-3">
+              <h4 className="fw-bold mb-1">
+                Productos de la venta
+              </h4>
 
-                <div className="col">
-
-                  <div className="d-flex align-items-center gap-3">
-
-                    <span className="fs-2">
-                      📦
-                    </span>
-
-                    <div>
-                      <h4 className="fw-bold mb-1">
-                        Productos de la venta
-                      </h4>
-
-                      <small className="text-secondary">
-                        Detalle de productos registrados
-                      </small>
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div className="col-12 col-sm-auto">
-                  <span className="badge bg-primary-subtle text-primary fs-6">
-                    {detalles.length} productos
-                  </span>
-                </div>
-
-              </div>
+              <small className="text-secondary">
+                Total: {detalles.length}
+              </small>
 
             </div>
 
@@ -436,83 +571,85 @@ function DetalleVenta({ setPagina }) {
 
                     <tr>
                       <th>Producto</th>
-                      <th className="text-center">
-                        Cantidad
-                      </th>
+                      <th>Cantidad</th>
                       <th>Precio</th>
                       <th>Subtotal</th>
-                      <th className="text-center">
-                        Acción
-                      </th>
                     </tr>
 
                   </thead>
 
                   <tbody>
 
-                    {detalles.map((item) => (
+                    {/* Cargando */}
+                    {cargando && (
 
-                      <tr
-                        key={`${item.id_venta}-${item.id_producto}`}
-                      >
+                      <tr>
 
-                        <td>
-                          <div className="fw-semibold">
-                            {item.nombre_producto}
-                          </div>
-
-                          <small className="text-secondary">
-                            Producto #{item.id_producto}
-                          </small>
-                        </td>
-
-                        <td className="text-center">
-                          {item.cantidad}
-                        </td>
-
-                        <td>
-                          S/. {item.precio_unitario}
-                        </td>
-
-                        <td className="fw-semibold text-success">
-                          S/. {item.subtotal}
-                        </td>
-
-                        <td className="text-center">
-
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline-danger"
-                          >
-                            🗑️ Eliminar
-                          </button>
-
+                        <td
+                          colSpan="4"
+                          className="text-center text-secondary py-4"
+                        >
+                          Cargando detalle...
                         </td>
 
                       </tr>
 
-                    ))}
+                    )}
+
+                    {/* Detalles */}
+                    {!cargando &&
+                      detalles.map((item) => (
+
+                        <tr
+                          key={`${item.id_venta}-${item.id_producto}`}
+                        >
+
+                          <td className="fw-semibold">
+                            {obtenerProducto(
+                              item.id_producto
+                            )}
+                          </td>
+
+                          <td>
+                            {item.cantidad}
+                          </td>
+
+                          <td>
+                            S/. {Number(
+                              item.precio_unitario
+                            ).toFixed(2)}
+                          </td>
+
+                          <td className="fw-semibold text-success">
+                            S/. {Number(
+                              item.subtotal
+                            ).toFixed(2)}
+                          </td>
+
+                        </tr>
+
+                      ))}
+
+                    {/* Sin datos */}
+                    {!cargando &&
+                      detalles.length === 0 && (
+
+                        <tr>
+
+                          <td
+                            colSpan="4"
+                            className="text-center text-secondary py-4"
+                          >
+                            Esta venta no tiene productos registrados.
+                          </td>
+
+                        </tr>
+
+                      )}
 
                   </tbody>
 
                 </table>
-
-              </div>
-
-            </div>
-
-            {/* Total */}
-            <div className="card-footer bg-white border-0 p-4">
-
-              <div className="text-end">
-
-                <small className="text-secondary d-block">
-                  Total de la venta
-                </small>
-
-                <span className="fs-3 fw-bold text-success">
-                  S/. 120.90
-                </span>
 
               </div>
 
@@ -527,4 +664,5 @@ function DetalleVenta({ setPagina }) {
     </div>
   );
 }
+
 export default DetalleVenta;

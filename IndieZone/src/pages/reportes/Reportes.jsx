@@ -1,36 +1,131 @@
+import { useEffect, useState } from "react";
+import api from "../../api/api";
+import Alerta from "../../components/utils/Alerta";
 import "./reportes.css";
 
 function Reportes() {
+  const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [ofertas, setOfertas] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [ventas, setVentas] = useState([]);
+  const [detalles, setDetalles] = useState([]);
 
-  // Datos temporales
-  const productosVendidos = [
-    {
-      nombre_producto: "Hollow Knight",
-      cantidad: 18,
-      total: "736.20"
-    },
-    {
-      nombre_producto: "Celeste",
-      cantidad: 14,
-      total: "712.60"
-    },
-    {
-      nombre_producto: "Stardew Valley",
-      cantidad: 10,
-      total: "305.00"
-    },
-    {
-      nombre_producto: "Undertale",
-      cantidad: 8,
-      total: "160.00"
+  const [cargando, setCargando] = useState(true);
+
+  const [alerta, setAlerta] = useState({
+    tipo: "",
+    mensaje: ""
+  });
+
+  // Obtener datos
+  const cargarReportes = async () => {
+    setCargando(true);
+
+    try {
+      const [
+        respuestaProductos,
+        respuestaCategorias,
+        respuestaOfertas,
+        respuestaClientes,
+        respuestaVentas,
+        respuestaDetalles
+      ] = await Promise.all([
+        api.get("/productos/"),
+        api.get("/categorias/"),
+        api.get("/ofertas/"),
+        api.get("/clientes/"),
+        api.get("/ventas/"),
+        api.get("/detalle-ventas/")
+      ]);
+
+      setProductos(respuestaProductos.data);
+      setCategorias(respuestaCategorias.data);
+      setOfertas(respuestaOfertas.data);
+      setClientes(respuestaClientes.data);
+      setVentas(respuestaVentas.data);
+      setDetalles(respuestaDetalles.data);
+
+    } catch (error) {
+      console.error(error);
+
+      setProductos([]);
+      setCategorias([]);
+      setOfertas([]);
+      setClientes([]);
+      setVentas([]);
+      setDetalles([]);
+
+      setAlerta({
+        tipo: "danger",
+        mensaje: "No se pudo obtener la información de reportes."
+      });
+
+    } finally {
+      setCargando(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    cargarReportes();
+  }, []);
+
+  // Total de ingresos
+  const totalIngresos = ventas.reduce(
+    (total, venta) =>
+      total + Number(venta.total_venta),
+    0
+  );
+
+  // Obtener producto
+  const obtenerProducto = (idProducto) => {
+    return productos.find(
+      (producto) =>
+        producto.id_producto === idProducto
+    );
+  };
+
+  // Productos más vendidos
+  const calcularProductosVendidos = () => {
+    const resumen = {};
+
+    detalles.forEach((detalle) => {
+      const idProducto = detalle.id_producto;
+
+      if (!resumen[idProducto]) {
+        resumen[idProducto] = {
+          id_producto: idProducto,
+          cantidad: 0,
+          total: 0
+        };
+      }
+
+      resumen[idProducto].cantidad += Number(
+        detalle.cantidad
+      );
+
+      resumen[idProducto].total += Number(
+        detalle.subtotal
+      );
+    });
+
+    return Object.values(resumen)
+      .sort(
+        (a, b) =>
+          b.cantidad - a.cantidad
+      )
+      .slice(0, 5);
+  };
+
+  const productosMasVendidos =
+    calcularProductosVendidos();
 
   return (
     <div className="container-fluid p-0">
 
       {/* Título */}
       <div className="mb-4">
+
         <h1 className="fw-bold display-6 mb-1">
           Reportes
         </h1>
@@ -38,14 +133,28 @@ function Reportes() {
         <p className="text-secondary fs-5 mb-0">
           Resumen general de IndieZone
         </p>
+
       </div>
 
-      {/* Resumen */}
+      {/* Alerta */}
+      <Alerta
+        tipo={alerta.tipo}
+        mensaje={alerta.mensaje}
+        cerrar={() =>
+          setAlerta({
+            tipo: "",
+            mensaje: ""
+          })
+        }
+      />
+
+      {/* Tarjetas */}
       <div className="row g-4 mb-4">
 
+        {/* Productos */}
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card reporte-card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
+          <div className="card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
@@ -58,17 +167,21 @@ function Reportes() {
                 </div>
 
                 <div>
+
                   <h2 className="fw-bold mb-0">
-                    28
+                    {cargando
+                      ? "..."
+                      : productos.length}
                   </h2>
 
-                  <span className="fw-semibold">
+                  <div className="fw-semibold">
                     Productos
-                  </span>
+                  </div>
 
-                  <small className="d-block text-secondary">
+                  <small className="text-secondary">
                     Registrados
                   </small>
+
                 </div>
 
               </div>
@@ -79,9 +192,10 @@ function Reportes() {
 
         </div>
 
+        {/* Clientes */}
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card reporte-card border-0 shadow-sm bg-info-subtle rounded-4 h-100">
+          <div className="card border-0 shadow-sm bg-info-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
@@ -94,17 +208,21 @@ function Reportes() {
                 </div>
 
                 <div>
+
                   <h2 className="fw-bold mb-0">
-                    42
+                    {cargando
+                      ? "..."
+                      : clientes.length}
                   </h2>
 
-                  <span className="fw-semibold">
+                  <div className="fw-semibold">
                     Clientes
-                  </span>
+                  </div>
 
-                  <small className="d-block text-secondary">
+                  <small className="text-secondary">
                     Registrados
                   </small>
+
                 </div>
 
               </div>
@@ -115,9 +233,10 @@ function Reportes() {
 
         </div>
 
+        {/* Ventas */}
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card reporte-card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
+          <div className="card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
@@ -130,17 +249,21 @@ function Reportes() {
                 </div>
 
                 <div>
+
                   <h2 className="fw-bold mb-0">
-                    156
+                    {cargando
+                      ? "..."
+                      : ventas.length}
                   </h2>
 
-                  <span className="fw-semibold">
+                  <div className="fw-semibold">
                     Ventas
-                  </span>
+                  </div>
 
-                  <small className="d-block text-secondary">
+                  <small className="text-secondary">
                     Realizadas
                   </small>
+
                 </div>
 
               </div>
@@ -151,9 +274,10 @@ function Reportes() {
 
         </div>
 
+        {/* Ingresos */}
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card reporte-card border-0 shadow-sm bg-warning-subtle rounded-4 h-100">
+          <div className="card border-0 shadow-sm bg-warning-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
@@ -166,17 +290,23 @@ function Reportes() {
                 </div>
 
                 <div>
+
                   <h2 className="fw-bold mb-0">
-                    S/. 850
+
+                    {cargando
+                      ? "..."
+                      : `S/. ${totalIngresos.toFixed(2)}`}
+
                   </h2>
 
-                  <span className="fw-semibold">
+                  <div className="fw-semibold">
                     Ingresos
-                  </span>
+                  </div>
 
-                  <small className="d-block text-secondary">
+                  <small className="text-secondary">
                     Total registrado
                   </small>
+
                 </div>
 
               </div>
@@ -189,6 +319,7 @@ function Reportes() {
 
       </div>
 
+      {/* Información */}
       <div className="row g-4">
 
         {/* Resumen general */}
@@ -205,6 +336,7 @@ function Reportes() {
                 </span>
 
                 <div>
+
                   <h4 className="fw-bold mb-1">
                     Resumen general
                   </h4>
@@ -212,75 +344,87 @@ function Reportes() {
                   <small className="text-secondary">
                     Estado actual del sistema
                   </small>
+
                 </div>
 
               </div>
 
             </div>
 
-            <div className="card-body pt-0">
+            <div className="card-body pt-2 px-4 pb-4">
 
-              <div className="list-group list-group-flush">
+              {/* Categorías */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
 
-                <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <span>
+                  Categorías registradas
+                </span>
 
-                  <span>
-                    Categorías registradas
-                  </span>
+                <span className="badge rounded-pill bg-primary">
+                  {cargando
+                    ? "..."
+                    : categorias.length}
+                </span>
 
-                  <span className="badge text-bg-primary rounded-pill">
-                    3
-                  </span>
+              </div>
 
-                </div>
+              {/* Ofertas */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
 
-                <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <span>
+                  Ofertas registradas
+                </span>
 
-                  <span>
-                    Ofertas disponibles
-                  </span>
+                <span className="badge rounded-pill bg-success">
+                  {cargando
+                    ? "..."
+                    : ofertas.length}
+                </span>
 
-                  <span className="badge text-bg-success rounded-pill">
-                    2
-                  </span>
+              </div>
 
-                </div>
+              {/* Productos */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
 
-                <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <span>
+                  Productos registrados
+                </span>
 
-                  <span>
-                    Productos registrados
-                  </span>
+                <span className="badge rounded-pill bg-info text-dark">
+                  {cargando
+                    ? "..."
+                    : productos.length}
+                </span>
 
-                  <span className="badge text-bg-info rounded-pill">
-                    28
-                  </span>
+              </div>
 
-                </div>
+              {/* Clientes */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
 
-                <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <span>
+                  Clientes registrados
+                </span>
 
-                  <span>
-                    Clientes registrados
-                  </span>
+                <span className="badge rounded-pill bg-secondary">
+                  {cargando
+                    ? "..."
+                    : clientes.length}
+                </span>
 
-                  <span className="badge text-bg-secondary rounded-pill">
-                    42
-                  </span>
+              </div>
 
-                </div>
+              {/* Ventas */}
+              <div className="d-flex justify-content-between align-items-center py-3">
 
-                <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <span>
+                  Ventas realizadas
+                </span>
 
-                  <span>
-                    Ventas realizadas
-                  </span>
-
-                  <span className="badge text-bg-warning rounded-pill">
-                    156
-                  </span>
-
-                </div>
+                <span className="badge rounded-pill bg-warning text-dark">
+                  {cargando
+                    ? "..."
+                    : ventas.length}
+                </span>
 
               </div>
 
@@ -304,20 +448,22 @@ function Reportes() {
                 </span>
 
                 <div>
+
                   <h4 className="fw-bold mb-1">
                     Productos más vendidos
                   </h4>
 
                   <small className="text-secondary">
-                    Productos con mayor cantidad de ventas
+                    Productos con mayor cantidad vendida
                   </small>
+
                 </div>
 
               </div>
 
             </div>
 
-            <div className="card-body pt-0">
+            <div className="card-body pt-2 px-4 pb-4">
 
               <div className="table-responsive">
 
@@ -340,31 +486,88 @@ function Reportes() {
 
                   <tbody>
 
-                    {productosVendidos.map((producto, index) => (
+                    {/* Cargando */}
+                    {cargando && (
 
-                      <tr key={producto.nombre_producto}>
+                      <tr>
 
-                        <td>
-                          <span className="badge text-bg-light">
-                            #{index + 1}
-                          </span>
-                        </td>
-
-                        <td className="fw-semibold">
-                          {producto.nombre_producto}
-                        </td>
-
-                        <td className="text-center">
-                          {producto.cantidad}
-                        </td>
-
-                        <td className="text-end fw-semibold text-success">
-                          S/. {producto.total}
+                        <td
+                          colSpan="4"
+                          className="text-center text-secondary py-4"
+                        >
+                          Cargando reportes...
                         </td>
 
                       </tr>
 
-                    ))}
+                    )}
+
+                    {/* Productos vendidos */}
+                    {!cargando &&
+                      productosMasVendidos.map(
+                        (item, index) => {
+
+                          const producto =
+                            obtenerProducto(
+                              item.id_producto
+                            );
+
+                          return (
+
+                            <tr key={item.id_producto}>
+
+                              <td>
+
+                                <span className="badge bg-light text-dark">
+                                  #{index + 1}
+                                </span>
+
+                              </td>
+
+                              <td className="fw-semibold">
+
+                                {producto
+                                  ? producto.nombre_producto
+                                  : "Producto no encontrado"}
+
+                              </td>
+
+                              <td className="text-center">
+
+                                <span className="badge bg-primary-subtle text-primary">
+                                  {item.cantidad}
+                                </span>
+
+                              </td>
+
+                              <td className="text-end fw-semibold text-success">
+
+                                S/. {item.total.toFixed(2)}
+
+                              </td>
+
+                            </tr>
+
+                          );
+                        }
+                      )}
+
+                    {/* Sin ventas */}
+                    {!cargando &&
+                      productosMasVendidos.length === 0 && (
+
+                        <tr>
+
+                          <td
+                            colSpan="4"
+                            className="text-center text-secondary py-4"
+                          >
+                            No hay productos vendidos para mostrar.
+                          </td>
+
+                        </tr>
+
+                      )}
 
                   </tbody>
 
@@ -383,4 +586,5 @@ function Reportes() {
     </div>
   );
 }
+
 export default Reportes;

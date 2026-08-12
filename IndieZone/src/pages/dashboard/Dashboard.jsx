@@ -1,15 +1,79 @@
 import { useEffect, useState } from "react";
+import api from "../../api/api";
+import Alerta from "../../components/utils/Alerta";
 import "./dashboard.css";
 
 function Dashboard({ setPagina }) {
   const [fechaHora, setFechaHora] = useState(new Date());
 
+  const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [ofertas, setOfertas] = useState([]);
+  const [ventas, setVentas] = useState([]);
+  const [clientes, setClientes] = useState([]);
+
+  const [cargando, setCargando] = useState(true);
+
+  const [alerta, setAlerta] = useState({
+    tipo: "",
+    mensaje: ""
+  });
+
+  // Reloj
   useEffect(() => {
     const reloj = setInterval(() => {
       setFechaHora(new Date());
     }, 1000);
 
     return () => clearInterval(reloj);
+  }, []);
+
+  // Obtener datos
+  const cargarDashboard = async () => {
+    setCargando(true);
+
+    try {
+      const [
+        respuestaProductos,
+        respuestaCategorias,
+        respuestaOfertas,
+        respuestaVentas,
+        respuestaClientes
+      ] = await Promise.all([
+        api.get("/productos/"),
+        api.get("/categorias/"),
+        api.get("/ofertas/"),
+        api.get("/ventas/"),
+        api.get("/clientes/")
+      ]);
+
+      setProductos(respuestaProductos.data);
+      setCategorias(respuestaCategorias.data);
+      setOfertas(respuestaOfertas.data);
+      setVentas(respuestaVentas.data);
+      setClientes(respuestaClientes.data);
+
+    } catch (error) {
+      console.error(error);
+
+      setProductos([]);
+      setCategorias([]);
+      setOfertas([]);
+      setVentas([]);
+      setClientes([]);
+
+      setAlerta({
+        tipo: "danger",
+        mensaje: "No se pudo obtener la información del sistema."
+      });
+
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarDashboard();
   }, []);
 
   const fechaActual = fechaHora.toLocaleDateString("es-PE", {
@@ -24,86 +88,18 @@ function Dashboard({ setPagina }) {
     second: "2-digit"
   });
 
-  // Datos temporales
-  const categorias = [
-    {
-      id_categoria: 1,
-      nombre: "Videojuegos"
-    },
-    {
-      id_categoria: 2,
-      nombre: "Consolas"
-    },
-    {
-      id_categoria: 3,
-      nombre: "Accesorios"
-    }
-  ];
-
-  const ofertas = [
-    {
-      id_oferta: 1,
-      nombre: "Oferta Indie",
-      porcentaje_descuento: 10
-    },
-    {
-      id_oferta: 2,
-      nombre: "Oferta Gamer",
-      porcentaje_descuento: 15
-    }
-  ];
-
-  const productos = [
-    {
-      id_producto: 4,
-      nombre_producto: "Hollow Knight",
-      tipo_producto: "Videojuego",
-      descripcion_producto: "Juego de acción y aventura",
-      precio: "40.90",
-      stock: 32,
-      id_categoria: 1,
-      id_oferta: 1
-    },
-    {
-      id_producto: 3,
-      nombre_producto: "Celeste",
-      tipo_producto: "Videojuego",
-      descripcion_producto: "Juego de plataformas",
-      precio: "50.90",
-      stock: 15,
-      id_categoria: 1,
-      id_oferta: null
-    },
-    {
-      id_producto: 2,
-      nombre_producto: "Stardew Valley",
-      tipo_producto: "Videojuego",
-      descripcion_producto: "Juego de simulación",
-      precio: "30.50",
-      stock: 10,
-      id_categoria: 1,
-      id_oferta: 2
-    },
-    {
-      id_producto: 1,
-      nombre_producto: "Undertale",
-      tipo_producto: "Videojuego",
-      descripcion_producto: "Juego RPG independiente",
-      precio: "20.00",
-      stock: 22,
-      id_categoria: 1,
-      id_oferta: null
-    }
-  ];
-
+  // Obtener categoría
   const obtenerCategoria = (idCategoria) => {
     const categoria = categorias.find(
       (item) => item.id_categoria === idCategoria
     );
 
-    return categoria ? categoria.nombre : "Sin categoría";
+    return categoria
+      ? categoria.nombre
+      : "Sin categoría";
   };
 
+  // Obtener oferta
   const obtenerOferta = (idOferta) => {
     if (!idOferta) {
       return null;
@@ -113,6 +109,11 @@ function Dashboard({ setPagina }) {
       (item) => item.id_oferta === idOferta
     );
   };
+
+  // Últimos productos registrados
+  const productosRecientes = [...productos]
+    .sort((a, b) => b.id_producto - a.id_producto)
+    .slice(0, 4);
 
   return (
     <div className="container-fluid p-0">
@@ -166,9 +167,22 @@ function Dashboard({ setPagina }) {
 
       </div>
 
+      {/* Alerta */}
+      <Alerta
+        tipo={alerta.tipo}
+        mensaje={alerta.mensaje}
+        cerrar={() =>
+          setAlerta({
+            tipo: "",
+            mensaje: ""
+          })
+        }
+      />
+
       {/* Resumen */}
       <div className="row g-4 mb-4">
 
+        {/* Productos */}
         <div className="col-12 col-sm-6 col-xl-3">
 
           <div className="card dashboard-card border-0 shadow-sm bg-primary-subtle h-100 rounded-4">
@@ -186,7 +200,7 @@ function Dashboard({ setPagina }) {
                 <div>
 
                   <h2 className="fw-bold mb-0">
-                    28
+                    {cargando ? "..." : productos.length}
                   </h2>
 
                   <span className="text-secondary">
@@ -211,6 +225,7 @@ function Dashboard({ setPagina }) {
 
         </div>
 
+        {/* Categorías */}
         <div className="col-12 col-sm-6 col-xl-3">
 
           <div className="card dashboard-card border-0 shadow-sm bg-info-subtle h-100 rounded-4">
@@ -228,7 +243,7 @@ function Dashboard({ setPagina }) {
                 <div>
 
                   <h2 className="fw-bold mb-0">
-                    7
+                    {cargando ? "..." : categorias.length}
                   </h2>
 
                   <span className="text-secondary">
@@ -253,6 +268,7 @@ function Dashboard({ setPagina }) {
 
         </div>
 
+        {/* Ventas */}
         <div className="col-12 col-sm-6 col-xl-3">
 
           <div className="card dashboard-card border-0 shadow-sm bg-success-subtle h-100 rounded-4">
@@ -270,7 +286,7 @@ function Dashboard({ setPagina }) {
                 <div>
 
                   <h2 className="fw-bold mb-0">
-                    156
+                    {cargando ? "..." : ventas.length}
                   </h2>
 
                   <span className="text-secondary">
@@ -295,6 +311,7 @@ function Dashboard({ setPagina }) {
 
         </div>
 
+        {/* Clientes */}
         <div className="col-12 col-sm-6 col-xl-3">
 
           <div className="card dashboard-card border-0 shadow-sm bg-warning-subtle h-100 rounded-4">
@@ -312,7 +329,7 @@ function Dashboard({ setPagina }) {
                 <div>
 
                   <h2 className="fw-bold mb-0">
-                    42
+                    {cargando ? "..." : clientes.length}
                   </h2>
 
                   <span className="text-secondary">
@@ -408,70 +425,112 @@ function Dashboard({ setPagina }) {
 
               <tbody>
 
-                {productos.map((producto) => {
+                {/* Cargando */}
+                {cargando && (
+                  <tr>
 
-                  const oferta = obtenerOferta(
-                    producto.id_oferta
-                  );
+                    <td
+                      colSpan="7"
+                      className="text-center text-secondary py-4"
+                    >
+                      Cargando productos...
+                    </td>
 
-                  return (
-                    <tr key={producto.id_producto}>
+                  </tr>
+                )}
 
-                      <td className="text-secondary">
-                        #{producto.id_producto}
-                      </td>
+                {/* Productos reales */}
+                {!cargando &&
+                  productosRecientes.map((producto) => {
 
-                      <td>
+                    const oferta = obtenerOferta(
+                      producto.id_oferta
+                    );
 
-                        <div className="fw-semibold">
-                          {producto.nombre_producto}
-                        </div>
+                    return (
+                      <tr key={producto.id_producto}>
 
-                        <small className="text-secondary">
-                          {producto.descripcion_producto}
-                        </small>
+                        <td className="text-secondary">
+                          #{producto.id_producto}
+                        </td>
 
-                      </td>
+                        <td>
 
-                      <td>
-                        {producto.tipo_producto}
-                      </td>
+                          <div className="fw-semibold">
+                            {producto.nombre_producto}
+                          </div>
 
-                      <td>
-                        {obtenerCategoria(
-                          producto.id_categoria
-                        )}
-                      </td>
+                          <small className="text-secondary">
+                            {producto.descripcion_producto ||
+                              "Sin descripción"}
+                          </small>
 
-                      <td className="fw-semibold">
-                        S/. {producto.precio}
-                      </td>
+                        </td>
 
-                      <td>
+                        <td>
+                          {producto.tipo_producto}
+                        </td>
 
-                        <span className="badge bg-primary-subtle text-primary">
-                          {producto.stock}
-                        </span>
+                        <td>
+                          {obtenerCategoria(
+                            producto.id_categoria
+                          )}
+                        </td>
 
-                      </td>
+                        <td className="fw-semibold">
+                          S/. {Number(
+                            producto.precio
+                          ).toFixed(2)}
+                        </td>
 
-                      <td>
+                        <td>
 
-                        {oferta ? (
-                          <span className="badge bg-success-subtle text-success">
-                            {oferta.porcentaje_descuento}% descuento
+                          <span className="badge bg-primary-subtle text-primary">
+                            {producto.stock}
                           </span>
-                        ) : (
-                          <span className="text-secondary">
-                            Sin oferta
-                          </span>
-                        )}
 
+                        </td>
+
+                        <td>
+
+                          {oferta ? (
+
+                            <span className="badge bg-success-subtle text-success">
+
+                              {oferta.porcentaje_descuento}% descuento
+
+                            </span>
+
+                          ) : (
+
+                            <span className="text-secondary">
+                              Sin oferta
+                            </span>
+
+                          )}
+
+                        </td>
+
+                      </tr>
+                    );
+                  })}
+
+                {/* Sin productos */}
+                {!cargando &&
+                  productosRecientes.length === 0 && (
+
+                    <tr>
+
+                      <td
+                        colSpan="7"
+                        className="text-center text-secondary py-4"
+                      >
+                        No hay productos registrados.
                       </td>
 
                     </tr>
-                  );
-                })}
+
+                  )}
 
               </tbody>
 
@@ -486,4 +545,5 @@ function Dashboard({ setPagina }) {
     </div>
   );
 }
+
 export default Dashboard;

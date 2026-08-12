@@ -14,3 +14,9 @@
 .dashboard-date {
   min-width: 240px;
 }
+
+.reporte-icon {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}

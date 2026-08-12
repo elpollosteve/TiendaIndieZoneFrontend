@@ -324,9 +324,11 @@ function RegistroProducto({ setPagina }) {
           <div className="d-flex align-items-center gap-3">
 
             <div className="producto-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+
               <span className="fs-2">
                 🎮
               </span>
+
             </div>
 
             <div>
@@ -379,33 +381,23 @@ function RegistroProducto({ setPagina }) {
               <div className="col-12 col-md-6">
 
                 <label className="form-label fw-semibold">
-                  Tipo de producto *
+                  Tipo / género / modelo *
                 </label>
 
-                <select
-                  className="form-select"
+                <input
+                  type="text"
+                  className="form-control"
                   name="tipo_producto"
+                  placeholder="Ej. Indie, Horror, Shooter, Portátil..."
+                  maxLength="30"
                   value={producto.tipo_producto}
                   onChange={cambiarDato}
                   required
-                >
-                  <option value="">
-                    Seleccionar tipo
-                  </option>
+                />
 
-                  <option value="Videojuego">
-                    Videojuego
-                  </option>
-
-                  <option value="Consola">
-                    Consola
-                  </option>
-
-                  <option value="Accesorio">
-                    Accesorio
-                  </option>
-
-                </select>
+                <div className="form-text">
+                  Género del videojuego, tipo de consola o modelo del accesorio.
+                </div>
 
               </div>
 
@@ -472,20 +464,27 @@ function RegistroProducto({ setPagina }) {
                   onChange={cambiarDato}
                   required
                 >
+
                   <option value="">
                     Seleccionar categoría
                   </option>
 
                   {categorias.map((categoria) => (
+
                     <option
                       key={categoria.id_categoria}
                       value={categoria.id_categoria}
                     >
                       {categoria.nombre}
                     </option>
+
                   ))}
 
                 </select>
+
+                <div className="form-text">
+                  Ej. Videojuegos, Consolas o Accesorios.
+                </div>
 
               </div>
 
@@ -502,17 +501,20 @@ function RegistroProducto({ setPagina }) {
                   value={producto.id_oferta}
                   onChange={cambiarDato}
                 >
+
                   <option value="">
                     Sin oferta
                   </option>
 
                   {ofertas.map((oferta) => (
+
                     <option
                       key={oferta.id_oferta}
                       value={oferta.id_oferta}
                     >
                       {oferta.nombre} - {oferta.porcentaje_descuento}%
                     </option>
+
                   ))}
 
                 </select>
@@ -531,7 +533,7 @@ function RegistroProducto({ setPagina }) {
                   name="descripcion_producto"
                   rows="3"
                   maxLength="200"
-                  placeholder="Ej. Juego de acción y aventura"
+                  placeholder="Ej. Videojuego indie de acción y aventura"
                   value={producto.descripcion_producto}
                   onChange={cambiarDato}
                 />
@@ -649,17 +651,23 @@ function RegistroProducto({ setPagina }) {
 
               <tbody>
 
+                {/* Cargando */}
                 {cargando && (
+
                   <tr>
+
                     <td
                       colSpan="8"
                       className="text-center text-secondary py-4"
                     >
                       Cargando productos...
                     </td>
+
                   </tr>
+
                 )}
 
+                {/* Productos */}
                 {!cargando &&
                   productosFiltrados.map((item) => (
 
@@ -676,7 +684,8 @@ function RegistroProducto({ setPagina }) {
                         </div>
 
                         <small className="text-secondary">
-                          {item.descripcion_producto || "Sin descripción"}
+                          {item.descripcion_producto ||
+                            "Sin descripción"}
                         </small>
 
                       </td>
@@ -692,7 +701,9 @@ function RegistroProducto({ setPagina }) {
                       </td>
 
                       <td className="fw-semibold">
-                        S/. {Number(item.precio).toFixed(2)}
+                        S/. {Number(
+                          item.precio
+                        ).toFixed(2)}
                       </td>
 
                       <td>
@@ -739,6 +750,7 @@ function RegistroProducto({ setPagina }) {
 
                   ))}
 
+                {/* Sin datos */}
                 {!cargando &&
                   productosFiltrados.length === 0 && (
 

@@ -1,0 +1,12 @@
+.producto-card {
+  overflow: hidden;
+}
+
+.producto-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.producto-card textarea {
+  resize: vertical;
+}

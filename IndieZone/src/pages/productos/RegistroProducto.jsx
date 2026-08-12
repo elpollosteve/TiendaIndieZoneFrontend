@@ -1,12 +1,8 @@
 import { useState } from "react";
+import Alerta from "../../components/utils/Alerta";
+import "./producto.css";
 
 function RegistroProducto({ setPagina }) {
-
-  // =========================================================
-  // PRODUCTO
-  // Los nombres coinciden con PostgreSQL
-  // =========================================================
-
   const [producto, setProducto] = useState({
     nombre_producto: "",
     tipo_producto: "",
@@ -17,7 +13,12 @@ function RegistroProducto({ setPagina }) {
     id_oferta: ""
   });
 
+  const [alerta, setAlerta] = useState({
+    tipo: "",
+    mensaje: ""
+  });
 
+  // Datos temporales
   const categorias = [
     {
       id_categoria: 1,
@@ -33,7 +34,6 @@ function RegistroProducto({ setPagina }) {
     }
   ];
 
-
   const ofertas = [
     {
       id_oferta: 1,
@@ -47,44 +47,14 @@ function RegistroProducto({ setPagina }) {
     }
   ];
 
-
-  // =========================================================
-  // CAMBIAR DATOS
-  // =========================================================
-
   const cambiarDato = (e) => {
-
     setProducto({
       ...producto,
       [e.target.name]: e.target.value
     });
-
   };
-
-
-  // =========================================================
-  // GUARDAR PRODUCTO
-  // Por ahora solo prueba el formulario.
-  // Luego aquí irá el fetch hacia FastAPI.
-  // =========================================================
-
-  const guardarProducto = (e) => {
-
-    e.preventDefault();
-
-    console.log(producto);
-
-    alert("Producto registrado correctamente");
-
-  };
-
-
-  // =========================================================
-  // LIMPIAR
-  // =========================================================
 
   const limpiarFormulario = () => {
-
     setProducto({
       nombre_producto: "",
       tipo_producto: "",
@@ -95,78 +65,90 @@ function RegistroProducto({ setPagina }) {
       id_oferta: ""
     });
 
+    setAlerta({
+      tipo: "",
+      mensaje: ""
+    });
   };
 
+  const guardarProducto = (e) => {
+    e.preventDefault();
+
+    // Luego aquí irá el POST al backend
+    console.log(producto);
+
+    setAlerta({
+      tipo: "success",
+      mensaje: "Producto preparado correctamente."
+    });
+  };
 
   return (
-
     <div className="container-fluid p-0">
 
-
-      {/* =====================================================
-          ENCABEZADO
-      ===================================================== */}
-
+      {/* Título */}
       <div className="row align-items-center g-3 mb-4">
 
         <div className="col">
-
           <h1 className="fw-bold display-6 mb-1">
-            Registro de Producto
+            Gestión de Productos
           </h1>
 
           <p className="text-secondary fs-5 mb-0">
-            Completa los datos para registrar un nuevo producto
+            Registra los productos disponibles en IndieZone
           </p>
-
         </div>
 
-
         <div className="col-12 col-sm-auto">
-
           <button
             type="button"
             className="btn btn-outline-secondary"
             onClick={() => setPagina("dashboard")}
           >
-            ← Volver al Dashboard
+            ← Volver
           </button>
-
         </div>
 
       </div>
 
+      {/* Alerta */}
+      <Alerta
+        tipo={alerta.tipo}
+        mensaje={alerta.mensaje}
+        cerrar={() =>
+          setAlerta({
+            tipo: "",
+            mensaje: ""
+          })
+        }
+      />
 
-      {/* =====================================================
-          TARJETA DEL FORMULARIO
-      ===================================================== */}
+      {/* Formulario */}
+      <div className="card producto-card border-0 shadow-sm rounded-4">
 
-      <div className="card border-0 shadow-sm rounded-4">
-
-        <div className="card-header bg-white border-0 px-4 pt-4">
+        <div className="card-header bg-primary-subtle border-0 p-4">
 
           <div className="d-flex align-items-center gap-3">
 
-            <span className="fs-3">
-              🎮
-            </span>
+            <div className="producto-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+              <span className="fs-2">
+                🎮
+              </span>
+            </div>
 
             <div>
-
               <h4 className="fw-bold mb-1">
-                Datos del producto
+                Nuevo producto
               </h4>
 
-              <p className="text-secondary mb-0">
-                Ingresa la información principal del producto
-              </p>
-
+              <small className="text-secondary">
+                Completa la información del producto
+              </small>
             </div>
 
           </div>
 
         </div>
-
 
         <div className="card-body p-4">
 
@@ -174,11 +156,7 @@ function RegistroProducto({ setPagina }) {
 
             <div className="row g-4">
 
-
-              {/* =============================================
-                  NOMBRE PRODUCTO
-              ============================================= */}
-
+              {/* Nombre */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -190,7 +168,7 @@ function RegistroProducto({ setPagina }) {
 
                 <input
                   type="text"
-                  className="form-control form-control-lg"
+                  className="form-control"
                   id="nombre_producto"
                   name="nombre_producto"
                   placeholder="Ej. Hollow Knight"
@@ -202,11 +180,7 @@ function RegistroProducto({ setPagina }) {
 
               </div>
 
-
-              {/* =============================================
-                  TIPO PRODUCTO
-              ============================================= */}
-
+              {/* Tipo */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -217,14 +191,13 @@ function RegistroProducto({ setPagina }) {
                 </label>
 
                 <select
-                  className="form-select form-select-lg"
+                  className="form-select"
                   id="tipo_producto"
                   name="tipo_producto"
                   value={producto.tipo_producto}
                   onChange={cambiarDato}
                   required
                 >
-
                   <option value="">
                     Seleccionar tipo
                   </option>
@@ -240,16 +213,11 @@ function RegistroProducto({ setPagina }) {
                   <option value="Accesorio">
                     Accesorio
                   </option>
-
                 </select>
 
               </div>
 
-
-              {/* =============================================
-                  PRECIO
-              ============================================= */}
-
+              {/* Precio */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -259,7 +227,7 @@ function RegistroProducto({ setPagina }) {
                   Precio *
                 </label>
 
-                <div className="input-group input-group-lg">
+                <div className="input-group">
 
                   <span className="input-group-text">
                     S/.
@@ -270,7 +238,7 @@ function RegistroProducto({ setPagina }) {
                     className="form-control"
                     id="precio"
                     name="precio"
-                    placeholder="45.90"
+                    placeholder="0.00"
                     min="0"
                     step="0.01"
                     value={producto.precio}
@@ -282,11 +250,7 @@ function RegistroProducto({ setPagina }) {
 
               </div>
 
-
-              {/* =============================================
-                  STOCK
-              ============================================= */}
-
+              {/* Stock */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -298,7 +262,7 @@ function RegistroProducto({ setPagina }) {
 
                 <input
                   type="number"
-                  className="form-control form-control-lg"
+                  className="form-control"
                   id="stock"
                   name="stock"
                   placeholder="Ej. 20"
@@ -310,11 +274,7 @@ function RegistroProducto({ setPagina }) {
 
               </div>
 
-
-              {/* =============================================
-                  CATEGORÍA
-              ============================================= */}
-
+              {/* Categoría */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -325,38 +285,31 @@ function RegistroProducto({ setPagina }) {
                 </label>
 
                 <select
-                  className="form-select form-select-lg"
+                  className="form-select"
                   id="id_categoria"
                   name="id_categoria"
                   value={producto.id_categoria}
                   onChange={cambiarDato}
                   required
                 >
-
                   <option value="">
                     Seleccionar categoría
                   </option>
 
                   {categorias.map((categoria) => (
-
                     <option
                       key={categoria.id_categoria}
                       value={categoria.id_categoria}
                     >
                       {categoria.nombre}
                     </option>
-
                   ))}
 
                 </select>
 
               </div>
 
-
-              {/* =============================================
-                  OFERTA
-              ============================================= */}
-
+              {/* Oferta */}
               <div className="col-12 col-md-6">
 
                 <label
@@ -367,41 +320,30 @@ function RegistroProducto({ setPagina }) {
                 </label>
 
                 <select
-                  className="form-select form-select-lg"
+                  className="form-select"
                   id="id_oferta"
                   name="id_oferta"
                   value={producto.id_oferta}
                   onChange={cambiarDato}
                 >
-
                   <option value="">
                     Sin oferta
                   </option>
 
                   {ofertas.map((oferta) => (
-
                     <option
                       key={oferta.id_oferta}
                       value={oferta.id_oferta}
                     >
                       {oferta.nombre} - {oferta.porcentaje_descuento}%
                     </option>
-
                   ))}
 
                 </select>
 
-                <div className="form-text">
-                  Este campo es opcional.
-                </div>
-
               </div>
 
-
-              {/* =============================================
-                  DESCRIPCIÓN
-              ============================================= */}
-
+              {/* Descripción */}
               <div className="col-12">
 
                 <label
@@ -417,7 +359,7 @@ function RegistroProducto({ setPagina }) {
                   name="descripcion_producto"
                   rows="4"
                   maxLength="200"
-                  placeholder="Describe el producto y sus características..."
+                  placeholder="Escribe una breve descripción del producto"
                   value={producto.descripcion_producto}
                   onChange={cambiarDato}
                 />
@@ -430,39 +372,30 @@ function RegistroProducto({ setPagina }) {
 
             </div>
 
-
-            {/* =============================================
-                BOTONES
-            ============================================= */}
-
-            <hr className="my-4" />
-
-
-            <div className="d-flex flex-column flex-sm-row justify-content-end gap-2">
+            {/* Botones */}
+            <div className="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
 
               <button
                 type="button"
-                className="btn btn-light border px-4"
+                className="btn btn-outline-secondary"
                 onClick={limpiarFormulario}
               >
                 Limpiar
               </button>
 
-
               <button
                 type="button"
-                className="btn btn-outline-secondary px-4"
+                className="btn btn-outline-danger"
                 onClick={() => setPagina("dashboard")}
               >
                 Cancelar
               </button>
 
-
               <button
                 type="submit"
                 className="btn btn-primary px-4"
               >
-                💾 Guardar producto
+                Guardar producto
               </button>
 
             </div>
@@ -476,5 +409,4 @@ function RegistroProducto({ setPagina }) {
     </div>
   );
 }
-
 export default RegistroProducto;

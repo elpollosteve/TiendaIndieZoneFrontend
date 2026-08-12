@@ -1,21 +1,20 @@
 import { useState } from "react";
-import Alerta from "./Alerta";
+import Alerta from "../../components/utils/Alerta";
+import "./ventas.css";
 
 function Ventas({ setPagina }) {
-
   const [venta, setVenta] = useState({
     fecha_venta: "",
     total_venta: "",
     id_cliente: ""
   });
 
-
   const [alerta, setAlerta] = useState({
     tipo: "",
     mensaje: ""
   });
 
-
+  // Datos temporales
   const clientes = [
     {
       id_cliente: 1,
@@ -33,7 +32,6 @@ function Ventas({ setPagina }) {
       apellido: "Fernández"
     }
   ];
-
 
   const ventas = [
     {
@@ -56,33 +54,39 @@ function Ventas({ setPagina }) {
     }
   ];
 
-
   const cambiarDato = (e) => {
-
     setVenta({
       ...venta,
       [e.target.name]: e.target.value
     });
-
   };
 
+  const limpiarFormulario = () => {
+    setVenta({
+      fecha_venta: "",
+      total_venta: "",
+      id_cliente: ""
+    });
+
+    setAlerta({
+      tipo: "",
+      mensaje: ""
+    });
+  };
 
   const guardarVenta = (e) => {
-
     e.preventDefault();
 
+    // Luego aquí irá el POST al backend
     console.log(venta);
 
     setAlerta({
       tipo: "success",
       mensaje: "Venta preparada correctamente."
     });
-
   };
 
-
   const obtenerCliente = (idCliente) => {
-
     const cliente = clientes.find(
       (item) => item.id_cliente === idCliente
     );
@@ -92,12 +96,9 @@ function Ventas({ setPagina }) {
     }
 
     return `${cliente.nombre} ${cliente.apellido}`;
-
   };
 
-
   const mostrarFecha = (fecha) => {
-
     if (!fecha) {
       return "-";
     }
@@ -105,30 +106,23 @@ function Ventas({ setPagina }) {
     const partes = fecha.split("-");
 
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
-
   };
-
 
   return (
     <div className="container-fluid p-0">
 
-      {/* ENCABEZADO */}
-
+      {/* Título */}
       <div className="mb-4">
-
         <h1 className="fw-bold display-6 mb-1">
           Gestión de Ventas
         </h1>
 
         <p className="text-secondary fs-5 mb-0">
-          Registra y consulta las ventas realizadas
+          Registra y consulta las ventas de IndieZone
         </p>
-
       </div>
 
-
-      {/* ALERTA */}
-
+      {/* Alerta */}
       <Alerta
         tipo={alerta.tipo}
         mensaje={alerta.mensaje}
@@ -140,15 +134,11 @@ function Ventas({ setPagina }) {
         }
       />
 
-
-      {/* RESUMEN */}
-
+      {/* Resumen */}
       <div className="row g-3 mb-4">
 
-        <div className="col-12 col-sm-6 col-lg-4">
-
-          <div className="card border-0 shadow-sm bg-primary-subtle h-100">
-
+        <div className="col-12 col-md-4">
+          <div className="card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -156,7 +146,6 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
-
                 <h3 className="fw-bold mb-0">
                   156
                 </h3>
@@ -164,20 +153,14 @@ function Ventas({ setPagina }) {
                 <span className="text-secondary">
                   Ventas realizadas
                 </span>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
-
-        <div className="col-12 col-sm-6 col-lg-4">
-
-          <div className="card border-0 shadow-sm bg-success-subtle h-100">
-
+        <div className="col-12 col-md-4">
+          <div className="card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -185,7 +168,6 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
-
                 <h3 className="fw-bold mb-0">
                   S/. 850.50
                 </h3>
@@ -193,20 +175,14 @@ function Ventas({ setPagina }) {
                 <span className="text-secondary">
                   Total vendido
                 </span>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
-
-        <div className="col-12 col-lg-4">
-
-          <div className="card border-0 shadow-sm bg-warning-subtle h-100">
-
+        <div className="col-12 col-md-4">
+          <div className="card border-0 shadow-sm bg-warning-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -214,7 +190,6 @@ function Ventas({ setPagina }) {
               </span>
 
               <div>
-
                 <h3 className="fw-bold mb-0">
                   10
                 </h3>
@@ -222,57 +197,50 @@ function Ventas({ setPagina }) {
                 <span className="text-secondary">
                   Ventas este mes
                 </span>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
       </div>
 
-
-      {/* FORMULARIO + TABLA */}
-
       <div className="row g-4">
 
-        {/* REGISTRAR */}
-
+        {/* Formulario */}
         <div className="col-12 col-lg-4">
 
-          <div className="card border-0 shadow-sm rounded-4">
+          <div className="card ventas-card border-0 shadow-sm rounded-4">
 
             <div className="card-header bg-success-subtle border-0 p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  🛒
-                </span>
+                <div className="ventas-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    🧾
+                  </span>
+                </div>
 
                 <div>
-
                   <h4 className="fw-bold mb-1">
                     Nueva venta
                   </h4>
 
                   <small className="text-secondary">
-                    Completa los datos principales
+                    Completa los datos de la venta
                   </small>
-
                 </div>
 
               </div>
 
             </div>
 
-
             <div className="card-body p-4">
 
               <form onSubmit={guardarVenta}>
 
+                {/* Cliente */}
                 <div className="mb-3">
 
                   <label
@@ -290,27 +258,24 @@ function Ventas({ setPagina }) {
                     onChange={cambiarDato}
                     required
                   >
-
                     <option value="">
                       Seleccionar cliente
                     </option>
 
                     {clientes.map((cliente) => (
-
                       <option
                         key={cliente.id_cliente}
                         value={cliente.id_cliente}
                       >
                         {cliente.nombre} {cliente.apellido}
                       </option>
-
                     ))}
 
                   </select>
 
                 </div>
 
-
+                {/* Fecha */}
                 <div className="mb-3">
 
                   <label
@@ -332,7 +297,7 @@ function Ventas({ setPagina }) {
 
                 </div>
 
-
+                {/* Total */}
                 <div className="mb-4">
 
                   <label
@@ -365,14 +330,22 @@ function Ventas({ setPagina }) {
 
                 </div>
 
-
-                <div className="d-grid">
+                {/* Botones */}
+                <div className="d-grid gap-2">
 
                   <button
                     type="submit"
                     className="btn btn-success"
                   >
-                    + Registrar venta
+                    Guardar venta
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={limpiarFormulario}
+                  >
+                    Limpiar
                   </button>
 
                 </div>
@@ -385,37 +358,48 @@ function Ventas({ setPagina }) {
 
         </div>
 
-
-        {/* TABLA */}
-
+        {/* Tabla */}
         <div className="col-12 col-lg-8">
 
           <div className="card border-0 shadow-sm rounded-4">
 
             <div className="card-header bg-white border-0 p-4">
 
-              <div className="d-flex align-items-center gap-3">
+              <div className="row align-items-center g-3">
 
-                <span className="fs-2">
-                  📋
-                </span>
+                <div className="col">
 
-                <div>
+                  <div className="d-flex align-items-center gap-3">
 
-                  <h4 className="fw-bold mb-1">
-                    Ventas registradas
-                  </h4>
+                    <span className="fs-2">
+                      📋
+                    </span>
 
-                  <small className="text-secondary">
-                    Historial de ventas del sistema
-                  </small>
+                    <div>
+                      <h4 className="fw-bold mb-1">
+                        Ventas registradas
+                      </h4>
+
+                      <small className="text-secondary">
+                        Historial de ventas del sistema
+                      </small>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div className="col-12 col-sm-auto">
+
+                  <span className="badge bg-success-subtle text-success fs-6">
+                    {ventas.length} ventas
+                  </span>
 
                 </div>
 
               </div>
 
             </div>
-
 
             <div className="card-body pt-0">
 
@@ -430,14 +414,12 @@ function Ventas({ setPagina }) {
                       <th>Cliente</th>
                       <th>Fecha</th>
                       <th>Total</th>
-
                       <th className="text-center">
-                        Acción
+                        Acciones
                       </th>
                     </tr>
 
                   </thead>
-
 
                   <tbody>
 
@@ -449,47 +431,44 @@ function Ventas({ setPagina }) {
                           #{item.id_venta}
                         </td>
 
-
                         <td className="fw-semibold">
-
-                          {obtenerCliente(
-                            item.id_cliente
-                          )}
-
+                          {obtenerCliente(item.id_cliente)}
                         </td>
 
+                        <td>
+                          {mostrarFecha(item.fecha_venta)}
+                        </td>
 
                         <td>
 
-                          {mostrarFecha(
-                            item.fecha_venta
-                          )}
-
-                        </td>
-
-
-                        <td>
-
-                          <span className="badge bg-success-subtle text-success fs-6">
-
+                          <span className="badge bg-success-subtle text-success">
                             S/. {item.total_venta}
-
                           </span>
 
                         </td>
 
+                        <td>
 
-                        <td className="text-center">
+                          <div className="d-flex justify-content-center gap-2">
 
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() =>
-                              setPagina("detalleVenta")
-                            }
-                          >
-                            👁 Ver detalle
-                          </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() =>
+                                setPagina("detalleVenta")
+                              }
+                            >
+                              👁 Ver detalle
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                            >
+                              🗑️ Eliminar
+                            </button>
+
+                          </div>
 
                         </td>
 
@@ -514,5 +493,4 @@ function Ventas({ setPagina }) {
     </div>
   );
 }
-
 export default Ventas;

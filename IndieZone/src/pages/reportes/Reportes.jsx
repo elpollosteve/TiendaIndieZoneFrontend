@@ -1,96 +1,74 @@
+import "./reportes.css";
+
 function Reportes() {
 
-  // =========================================================
-  // DATOS TEMPORALES
-  // Más adelante vendrán desde el backend
-  // =========================================================
-
+  // Datos temporales
   const productosVendidos = [
-
     {
       nombre_producto: "Hollow Knight",
       cantidad: 18,
       total: "736.20"
     },
-
     {
       nombre_producto: "Celeste",
       cantidad: 14,
       total: "712.60"
     },
-
     {
       nombre_producto: "Stardew Valley",
       cantidad: 10,
       total: "305.00"
     },
-
     {
       nombre_producto: "Undertale",
       cantidad: 8,
       total: "160.00"
     }
-
   ];
 
-
   return (
-
     <div className="container-fluid p-0">
 
-
-      {/* =====================================================
-          ENCABEZADO
-      ===================================================== */}
-
+      {/* Título */}
       <div className="mb-4">
-
         <h1 className="fw-bold display-6 mb-1">
           Reportes
         </h1>
 
         <p className="text-secondary fs-5 mb-0">
-          Consulta el resumen general de IndieZone
+          Resumen general de IndieZone
         </p>
-
       </div>
 
-
-      {/* =====================================================
-          TARJETAS
-      ===================================================== */}
-
+      {/* Resumen */}
       <div className="row g-4 mb-4">
-
-
-        {/* PRODUCTOS */}
 
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card border-0 shadow-sm bg-primary-subtle h-100">
+          <div className="card reporte-card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  🎮
-                </span>
+                <div className="reporte-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    🎮
+                  </span>
+                </div>
 
                 <div>
-
                   <h2 className="fw-bold mb-0">
                     28
                   </h2>
 
-                  <div className="fw-semibold">
+                  <span className="fw-semibold">
                     Productos
-                  </div>
+                  </span>
 
-                  <small className="text-secondary">
+                  <small className="d-block text-secondary">
                     Registrados
                   </small>
-
                 </div>
 
               </div>
@@ -101,35 +79,32 @@ function Reportes() {
 
         </div>
 
-
-        {/* CLIENTES */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card border-0 shadow-sm bg-info-subtle h-100">
+          <div className="card reporte-card border-0 shadow-sm bg-info-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  👥
-                </span>
+                <div className="reporte-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    👥
+                  </span>
+                </div>
 
                 <div>
-
                   <h2 className="fw-bold mb-0">
                     42
                   </h2>
 
-                  <div className="fw-semibold">
+                  <span className="fw-semibold">
                     Clientes
-                  </div>
+                  </span>
 
-                  <small className="text-secondary">
+                  <small className="d-block text-secondary">
                     Registrados
                   </small>
-
                 </div>
 
               </div>
@@ -140,35 +115,32 @@ function Reportes() {
 
         </div>
 
-
-        {/* VENTAS */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card border-0 shadow-sm bg-success-subtle h-100">
+          <div className="card reporte-card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  🛒
-                </span>
+                <div className="reporte-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    🛒
+                  </span>
+                </div>
 
                 <div>
-
                   <h2 className="fw-bold mb-0">
                     156
                   </h2>
 
-                  <div className="fw-semibold">
+                  <span className="fw-semibold">
                     Ventas
-                  </div>
+                  </span>
 
-                  <small className="text-secondary">
+                  <small className="d-block text-secondary">
                     Realizadas
                   </small>
-
                 </div>
 
               </div>
@@ -179,35 +151,32 @@ function Reportes() {
 
         </div>
 
-
-        {/* INGRESOS */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <div className="card border-0 shadow-sm bg-warning-subtle h-100">
+          <div className="card reporte-card border-0 shadow-sm bg-warning-subtle rounded-4 h-100">
 
             <div className="card-body p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  💰
-                </span>
+                <div className="reporte-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    💰
+                  </span>
+                </div>
 
                 <div>
-
                   <h2 className="fw-bold mb-0">
                     S/. 850
                   </h2>
 
-                  <div className="fw-semibold">
+                  <span className="fw-semibold">
                     Ingresos
-                  </div>
+                  </span>
 
-                  <small className="text-secondary">
+                  <small className="d-block text-secondary">
                     Total registrado
                   </small>
-
                 </div>
 
               </div>
@@ -220,18 +189,9 @@ function Reportes() {
 
       </div>
 
-
-      {/* =====================================================
-          SEGUNDA FILA
-      ===================================================== */}
-
       <div className="row g-4">
 
-
-        {/* ===================================================
-            RESUMEN
-        =================================================== */}
-
+        {/* Resumen general */}
         <div className="col-12 col-lg-5">
 
           <div className="card border-0 shadow-sm rounded-4 h-100">
@@ -240,12 +200,11 @@ function Reportes() {
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-3">
+                <span className="fs-2">
                   📊
                 </span>
 
                 <div>
-
                   <h4 className="fw-bold mb-1">
                     Resumen general
                   </h4>
@@ -253,18 +212,15 @@ function Reportes() {
                   <small className="text-secondary">
                     Estado actual del sistema
                   </small>
-
                 </div>
 
               </div>
 
             </div>
 
-
             <div className="card-body pt-0">
 
               <div className="list-group list-group-flush">
-
 
                 <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
 
@@ -278,7 +234,6 @@ function Reportes() {
 
                 </div>
 
-
                 <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
 
                   <span>
@@ -290,7 +245,6 @@ function Reportes() {
                   </span>
 
                 </div>
-
 
                 <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
 
@@ -304,7 +258,6 @@ function Reportes() {
 
                 </div>
 
-
                 <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
 
                   <span>
@@ -316,7 +269,6 @@ function Reportes() {
                   </span>
 
                 </div>
-
 
                 <div className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
 
@@ -338,11 +290,7 @@ function Reportes() {
 
         </div>
 
-
-        {/* ===================================================
-            PRODUCTOS MÁS VENDIDOS
-        =================================================== */}
-
+        {/* Productos más vendidos */}
         <div className="col-12 col-lg-7">
 
           <div className="card border-0 shadow-sm rounded-4 h-100">
@@ -351,26 +299,23 @@ function Reportes() {
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-3">
+                <span className="fs-2">
                   🏆
                 </span>
 
                 <div>
-
                   <h4 className="fw-bold mb-1">
                     Productos más vendidos
                   </h4>
 
                   <small className="text-secondary">
-                    Resumen de ventas por producto
+                    Productos con mayor cantidad de ventas
                   </small>
-
                 </div>
 
               </div>
 
             </div>
-
 
             <div className="card-body pt-0">
 
@@ -381,67 +326,45 @@ function Reportes() {
                   <thead className="table-light">
 
                     <tr>
-
+                      <th>Posición</th>
                       <th>Producto</th>
-
                       <th className="text-center">
                         Cantidad
                       </th>
-
                       <th className="text-end">
                         Total
                       </th>
-
                     </tr>
 
                   </thead>
 
-
                   <tbody>
 
-                    {productosVendidos.map(
-                      (producto, index) => (
+                    {productosVendidos.map((producto, index) => (
 
-                        <tr key={producto.nombre_producto}>
+                      <tr key={producto.nombre_producto}>
 
-                          <td>
+                        <td>
+                          <span className="badge text-bg-light">
+                            #{index + 1}
+                          </span>
+                        </td>
 
-                            <div className="d-flex align-items-center gap-2">
+                        <td className="fw-semibold">
+                          {producto.nombre_producto}
+                        </td>
 
-                              <span className="badge text-bg-light">
+                        <td className="text-center">
+                          {producto.cantidad}
+                        </td>
 
-                                #{index + 1}
+                        <td className="text-end fw-semibold text-success">
+                          S/. {producto.total}
+                        </td>
 
-                              </span>
+                      </tr>
 
-                              <span className="fw-semibold">
-
-                                {producto.nombre_producto}
-
-                              </span>
-
-                            </div>
-
-                          </td>
-
-
-                          <td className="text-center">
-
-                            {producto.cantidad}
-
-                          </td>
-
-
-                          <td className="text-end fw-semibold text-success">
-
-                            S/. {producto.total}
-
-                          </td>
-
-                        </tr>
-
-                      )
-                    )}
+                    ))}
 
                   </tbody>
 
@@ -460,5 +383,4 @@ function Reportes() {
     </div>
   );
 }
-
 export default Reportes;

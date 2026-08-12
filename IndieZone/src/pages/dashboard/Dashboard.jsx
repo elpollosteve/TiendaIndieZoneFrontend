@@ -1,49 +1,30 @@
 import { useEffect, useState } from "react";
+import "./dashboard.css";
 
 function Dashboard({ setPagina }) {
-
-  // =========================================================
-  // FECHA Y HORA
-  // =========================================================
-
   const [fechaHora, setFechaHora] = useState(new Date());
 
-
   useEffect(() => {
-
     const reloj = setInterval(() => {
       setFechaHora(new Date());
     }, 1000);
 
     return () => clearInterval(reloj);
-
   }, []);
 
+  const fechaActual = fechaHora.toLocaleDateString("es-PE", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
 
-  const fechaActual = fechaHora.toLocaleDateString(
-    "es-PE",
-    {
-      day: "2-digit",
-      month: "long",
-      year: "numeric"
-    }
-  );
+  const horaActual = fechaHora.toLocaleTimeString("es-PE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
 
-
-  const horaActual = fechaHora.toLocaleTimeString(
-    "es-PE",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    }
-  );
-
-
-  // =========================================================
-  // CATEGORÍAS TEMPORALES
-  // =========================================================
-
+  // Datos temporales
   const categorias = [
     {
       id_categoria: 1,
@@ -59,11 +40,6 @@ function Dashboard({ setPagina }) {
     }
   ];
 
-
-  // =========================================================
-  // OFERTAS TEMPORALES
-  // =========================================================
-
   const ofertas = [
     {
       id_oferta: 1,
@@ -77,14 +53,7 @@ function Dashboard({ setPagina }) {
     }
   ];
 
-
-  // =========================================================
-  // PRODUCTOS TEMPORALES
-  // Campos iguales a PostgreSQL
-  // =========================================================
-
   const productos = [
-
     {
       id_producto: 4,
       nombre_producto: "Hollow Knight",
@@ -95,7 +64,6 @@ function Dashboard({ setPagina }) {
       id_categoria: 1,
       id_oferta: 1
     },
-
     {
       id_producto: 3,
       nombre_producto: "Celeste",
@@ -106,7 +74,6 @@ function Dashboard({ setPagina }) {
       id_categoria: 1,
       id_oferta: null
     },
-
     {
       id_producto: 2,
       nombre_producto: "Stardew Valley",
@@ -117,7 +84,6 @@ function Dashboard({ setPagina }) {
       id_categoria: 1,
       id_oferta: 2
     },
-
     {
       id_producto: 1,
       nombre_producto: "Undertale",
@@ -128,33 +94,17 @@ function Dashboard({ setPagina }) {
       id_categoria: 1,
       id_oferta: null
     }
-
   ];
 
-
-  // =========================================================
-  // OBTENER NOMBRE DE CATEGORÍA
-  // =========================================================
-
   const obtenerCategoria = (idCategoria) => {
-
     const categoria = categorias.find(
       (item) => item.id_categoria === idCategoria
     );
 
-    return categoria
-      ? categoria.nombre
-      : "Sin categoría";
-
+    return categoria ? categoria.nombre : "Sin categoría";
   };
 
-
-  // =========================================================
-  // OBTENER OFERTA
-  // =========================================================
-
   const obtenerOferta = (idOferta) => {
-
     if (!idOferta) {
       return null;
     }
@@ -162,23 +112,15 @@ function Dashboard({ setPagina }) {
     return ofertas.find(
       (item) => item.id_oferta === idOferta
     );
-
   };
 
-
   return (
-
     <div className="container-fluid p-0">
 
-
-      {/* =====================================================
-          ENCABEZADO
-      ===================================================== */}
-
+      {/* Título */}
       <div className="row align-items-center g-3 mb-4">
 
-
-        <div className="col-12 col-md">
+        <div className="col-12 col-lg">
 
           <h1 className="fw-bold display-6 mb-1">
             Panel Principal
@@ -190,14 +132,11 @@ function Dashboard({ setPagina }) {
 
         </div>
 
+        <div className="col-12 col-lg-auto">
 
-        {/* FECHA Y HORA */}
+          <div className="card dashboard-date border-0 shadow-sm rounded-4">
 
-        <div className="col-12 col-md-auto">
-
-          <div className="card border-0 shadow-sm">
-
-            <div className="card-body py-2 px-3">
+            <div className="card-body py-3 px-4">
 
               <div className="d-flex align-items-center gap-3">
 
@@ -211,9 +150,9 @@ function Dashboard({ setPagina }) {
                     {fechaActual}
                   </div>
 
-                  <div className="text-primary fw-bold">
+                  <small className="text-secondary">
                     {horaActual}
-                  </div>
+                  </small>
 
                 </div>
 
@@ -227,36 +166,22 @@ function Dashboard({ setPagina }) {
 
       </div>
 
-
-      {/* =====================================================
-          TARJETAS
-      ===================================================== */}
-
+      {/* Resumen */}
       <div className="row g-4 mb-4">
-
-
-        {/* PRODUCTOS */}
 
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <button
-            type="button"
-            className="card border-0 shadow-sm bg-primary-subtle h-100 w-100 text-start"
-            onClick={() => setPagina("producto")}
-          >
+          <div className="card dashboard-card border-0 shadow-sm bg-primary-subtle h-100 rounded-4">
 
             <div className="card-body p-4">
 
-              <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3 mb-3">
 
-                <div className="bg-white bg-opacity-75 rounded-circle d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0">
-
-                  <span className="fs-2 lh-1">
+                <div className="dashboard-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
                     🎮
                   </span>
-
                 </div>
-
 
                 <div>
 
@@ -264,47 +189,41 @@ function Dashboard({ setPagina }) {
                     28
                   </h2>
 
-                  <div className="fw-semibold fs-5">
+                  <span className="text-secondary">
                     Productos
-                  </div>
-
-                  <small className="text-secondary">
-                    Registrados
-                  </small>
+                  </span>
 
                 </div>
 
               </div>
 
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => setPagina("producto")}
+              >
+                Ver productos
+              </button>
+
             </div>
 
-          </button>
+          </div>
 
         </div>
 
-
-        {/* CATEGORÍAS */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <button
-            type="button"
-            className="card border-0 shadow-sm bg-info-subtle h-100 w-100 text-start"
-            onClick={() => setPagina("categoria")}
-          >
+          <div className="card dashboard-card border-0 shadow-sm bg-info-subtle h-100 rounded-4">
 
             <div className="card-body p-4">
 
-              <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3 mb-3">
 
-                <div className="bg-white bg-opacity-75 rounded-circle d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0">
-
-                  <span className="fs-2 lh-1">
+                <div className="dashboard-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
                     🏷️
                   </span>
-
                 </div>
-
 
                 <div>
 
@@ -312,47 +231,41 @@ function Dashboard({ setPagina }) {
                     7
                   </h2>
 
-                  <div className="fw-semibold fs-5">
+                  <span className="text-secondary">
                     Categorías
-                  </div>
-
-                  <small className="text-secondary">
-                    Registradas
-                  </small>
+                  </span>
 
                 </div>
 
               </div>
 
+              <button
+                type="button"
+                className="btn btn-info btn-sm"
+                onClick={() => setPagina("categoria")}
+              >
+                Ver categorías
+              </button>
+
             </div>
 
-          </button>
+          </div>
 
         </div>
 
-
-        {/* VENTAS */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <button
-            type="button"
-            className="card border-0 shadow-sm bg-success-subtle h-100 w-100 text-start"
-            onClick={() => setPagina("ventas")}
-          >
+          <div className="card dashboard-card border-0 shadow-sm bg-success-subtle h-100 rounded-4">
 
             <div className="card-body p-4">
 
-              <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3 mb-3">
 
-                <div className="bg-white bg-opacity-75 rounded-circle d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0">
-
-                  <span className="fs-2 lh-1">
+                <div className="dashboard-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
                     🛒
                   </span>
-
                 </div>
-
 
                 <div>
 
@@ -360,47 +273,41 @@ function Dashboard({ setPagina }) {
                     156
                   </h2>
 
-                  <div className="fw-semibold fs-5">
+                  <span className="text-secondary">
                     Ventas
-                  </div>
-
-                  <small className="text-secondary">
-                    Realizadas
-                  </small>
+                  </span>
 
                 </div>
 
               </div>
 
+              <button
+                type="button"
+                className="btn btn-success btn-sm"
+                onClick={() => setPagina("ventas")}
+              >
+                Ver ventas
+              </button>
+
             </div>
 
-          </button>
+          </div>
 
         </div>
 
-
-        {/* CLIENTES */}
-
         <div className="col-12 col-sm-6 col-xl-3">
 
-          <button
-            type="button"
-            className="card border-0 shadow-sm bg-danger-subtle h-100 w-100 text-start"
-            onClick={() => setPagina("cliente")}
-          >
+          <div className="card dashboard-card border-0 shadow-sm bg-warning-subtle h-100 rounded-4">
 
             <div className="card-body p-4">
 
-              <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3 mb-3">
 
-                <div className="bg-white bg-opacity-75 rounded-circle d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0">
-
-                  <span className="fs-2 lh-1">
+                <div className="dashboard-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
                     👥
                   </span>
-
                 </div>
-
 
                 <div>
 
@@ -408,46 +315,42 @@ function Dashboard({ setPagina }) {
                     42
                   </h2>
 
-                  <div className="fw-semibold fs-5">
+                  <span className="text-secondary">
                     Clientes
-                  </div>
-
-                  <small className="text-secondary">
-                    Registrados
-                  </small>
+                  </span>
 
                 </div>
 
               </div>
 
+              <button
+                type="button"
+                className="btn btn-warning btn-sm"
+                onClick={() => setPagina("cliente")}
+              >
+                Ver clientes
+              </button>
+
             </div>
 
-          </button>
+          </div>
 
         </div>
 
       </div>
 
-
-      {/* =====================================================
-          PRODUCTOS RECIENTES
-      ===================================================== */}
-
+      {/* Productos recientes */}
       <div className="card border-0 shadow-sm rounded-4">
 
-
-        {/* CABECERA */}
-
-        <div className="card-header bg-white border-0 pt-4 px-4">
+        <div className="card-header bg-white border-0 p-4">
 
           <div className="row align-items-center g-3">
-
 
             <div className="col">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-3">
+                <span className="fs-2">
                   📦
                 </span>
 
@@ -457,9 +360,9 @@ function Dashboard({ setPagina }) {
                     Productos recientes
                   </h4>
 
-                  <p className="text-secondary mb-0">
+                  <small className="text-secondary">
                     Últimos productos registrados
-                  </p>
+                  </small>
 
                 </div>
 
@@ -467,15 +370,14 @@ function Dashboard({ setPagina }) {
 
             </div>
 
-
             <div className="col-12 col-sm-auto">
 
               <button
                 type="button"
-                className="btn btn-primary px-4"
+                className="btn btn-outline-primary"
                 onClick={() => setPagina("producto")}
               >
-                + Registrar producto
+                Agregar productos
               </button>
 
             </div>
@@ -484,10 +386,7 @@ function Dashboard({ setPagina }) {
 
         </div>
 
-
-        {/* TABLA */}
-
-        <div className="card-body px-4">
+        <div className="card-body pt-0">
 
           <div className="table-responsive">
 
@@ -496,25 +395,16 @@ function Dashboard({ setPagina }) {
               <thead className="table-light">
 
                 <tr>
-
                   <th>ID</th>
-
-                  <th>Nombre</th>
-
+                  <th>Producto</th>
                   <th>Tipo</th>
-
-                  <th>Precio</th>
-
-                  <th>Stock</th>
-
                   <th>Categoría</th>
-
+                  <th>Precio</th>
+                  <th>Stock</th>
                   <th>Oferta</th>
-
                 </tr>
 
               </thead>
-
 
               <tbody>
 
@@ -525,93 +415,62 @@ function Dashboard({ setPagina }) {
                   );
 
                   return (
-
                     <tr key={producto.id_producto}>
 
                       <td className="text-secondary">
-
                         #{producto.id_producto}
-
                       </td>
-
-
-                      <td className="fw-semibold">
-
-                        {producto.nombre_producto}
-
-                      </td>
-
 
                       <td>
 
+                        <div className="fw-semibold">
+                          {producto.nombre_producto}
+                        </div>
+
+                        <small className="text-secondary">
+                          {producto.descripcion_producto}
+                        </small>
+
+                      </td>
+
+                      <td>
                         {producto.tipo_producto}
-
                       </td>
 
+                      <td>
+                        {obtenerCategoria(
+                          producto.id_categoria
+                        )}
+                      </td>
 
                       <td className="fw-semibold">
-
                         S/. {producto.precio}
-
                       </td>
-
 
                       <td>
 
-                        <span
-                          className={
-                            producto.stock <= 10
-                              ? "badge text-bg-warning"
-                              : "badge text-bg-light"
-                          }
-                        >
-
+                        <span className="badge bg-primary-subtle text-primary">
                           {producto.stock}
-
                         </span>
 
                       </td>
-
-
-                      <td>
-
-                        <span className="badge bg-primary-subtle text-primary border border-primary-subtle">
-
-                          {obtenerCategoria(
-                            producto.id_categoria
-                          )}
-
-                        </span>
-
-                      </td>
-
 
                       <td>
 
                         {oferta ? (
-
-                          <span className="badge bg-success-subtle text-success border border-success-subtle">
-
-                            {oferta.porcentaje_descuento}%
-
+                          <span className="badge bg-success-subtle text-success">
+                            {oferta.porcentaje_descuento}% descuento
                           </span>
-
                         ) : (
-
-                          <span className="badge text-bg-light">
-
+                          <span className="text-secondary">
                             Sin oferta
-
                           </span>
-
                         )}
 
                       </td>
 
                     </tr>
-
                   );
-
                 })}
 
               </tbody>
@@ -622,36 +481,9 @@ function Dashboard({ setPagina }) {
 
         </div>
 
-
-        {/* PIE */}
-
-        <div className="card-footer bg-white border-0 px-4 pb-4">
-
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
-
-            <small className="text-secondary">
-
-              Mostrando {productos.length} productos recientes
-
-            </small>
-
-
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-primary"
-              onClick={() => setPagina("producto")}
-            >
-              Ver productos →
-            </button>
-
-          </div>
-
-        </div>
-
       </div>
 
     </div>
   );
 }
-
 export default Dashboard;

@@ -1,30 +1,38 @@
+import { useState } from "react";
+import Alerta from "../../components/utils/Alerta";
+import "./detalleVenta.css";
+
 function DetalleVenta({ setPagina }) {
+  const [detalle, setDetalle] = useState({
+    id_producto: "",
+    cantidad: "",
+    precio_unitario: "",
+    subtotal: ""
+  });
 
-  // =========================================================
-  // DATOS TEMPORALES
-  // Luego vendrán desde FastAPI
-  // =========================================================
+  const [alerta, setAlerta] = useState({
+    tipo: "",
+    mensaje: ""
+  });
 
+  // Datos temporales
   const productos = [
     {
       id_producto: 1,
-      nombre_producto: "Hollow Knight"
+      nombre_producto: "Hollow Knight",
+      precio: "40.90"
     },
     {
       id_producto: 2,
-      nombre_producto: "Celeste"
+      nombre_producto: "Celeste",
+      precio: "50.90"
     },
     {
       id_producto: 3,
-      nombre_producto: "Stardew Valley"
+      nombre_producto: "Stardew Valley",
+      precio: "30.50"
     }
   ];
-
-
-  // =========================================================
-  // DETALLE TEMPORAL
-  // Campos iguales a la tabla detalle_venta
-  // =========================================================
 
   const detalles = [
     {
@@ -37,39 +45,64 @@ function DetalleVenta({ setPagina }) {
     },
     {
       id_venta: 10,
-      id_producto: 2,
-      nombre_producto: "Celeste",
+      id_producto: 3,
+      nombre_producto: "Stardew Valley",
       cantidad: 1,
       precio_unitario: "39.10",
       subtotal: "39.10"
     }
   ];
 
+  const cambiarDato = (e) => {
+    setDetalle({
+      ...detalle,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const limpiarFormulario = () => {
+    setDetalle({
+      id_producto: "",
+      cantidad: "",
+      precio_unitario: "",
+      subtotal: ""
+    });
+
+    setAlerta({
+      tipo: "",
+      mensaje: ""
+    });
+  };
+
+  const guardarDetalle = (e) => {
+    e.preventDefault();
+
+    // Luego aquí irá el POST al backend
+    console.log(detalle);
+
+    setAlerta({
+      tipo: "success",
+      mensaje: "Detalle preparado correctamente."
+    });
+  };
 
   return (
     <div className="container-fluid p-0">
 
-      {/* =====================================================
-          ENCABEZADO
-      ===================================================== */}
-
+      {/* Título */}
       <div className="row align-items-center g-3 mb-4">
 
         <div className="col">
-
           <h1 className="fw-bold display-6 mb-1">
             Detalle de Venta
           </h1>
 
           <p className="text-secondary fs-5 mb-0">
-            Productos asociados a la venta
+            Productos incluidos en la venta
           </p>
-
         </div>
 
-
         <div className="col-12 col-sm-auto">
-
           <button
             type="button"
             className="btn btn-outline-secondary"
@@ -77,22 +110,27 @@ function DetalleVenta({ setPagina }) {
           >
             ← Volver a Ventas
           </button>
-
         </div>
 
       </div>
 
+      {/* Alerta */}
+      <Alerta
+        tipo={alerta.tipo}
+        mensaje={alerta.mensaje}
+        cerrar={() =>
+          setAlerta({
+            tipo: "",
+            mensaje: ""
+          })
+        }
+      />
 
-      {/* =====================================================
-          RESUMEN DE LA VENTA
-      ===================================================== */}
-
+      {/* Resumen */}
       <div className="row g-3 mb-4">
 
         <div className="col-12 col-md-4">
-
-          <div className="card border-0 shadow-sm bg-primary-subtle h-100">
-
+          <div className="card border-0 shadow-sm bg-primary-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -100,7 +138,6 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
-
                 <small className="text-secondary">
                   Venta
                 </small>
@@ -108,20 +145,14 @@ function DetalleVenta({ setPagina }) {
                 <h3 className="fw-bold mb-0">
                   #10
                 </h3>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
-
         <div className="col-12 col-md-4">
-
-          <div className="card border-0 shadow-sm bg-info-subtle h-100">
-
+          <div className="card border-0 shadow-sm bg-info-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -129,7 +160,6 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
-
                 <small className="text-secondary">
                   Cliente
                 </small>
@@ -137,20 +167,14 @@ function DetalleVenta({ setPagina }) {
                 <h5 className="fw-bold mb-0">
                   Carlos Ramírez
                 </h5>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
-
         <div className="col-12 col-md-4">
-
-          <div className="card border-0 shadow-sm bg-success-subtle h-100">
-
+          <div className="card border-0 shadow-sm bg-success-subtle rounded-4 h-100">
             <div className="card-body d-flex align-items-center gap-3">
 
               <span className="fs-2">
@@ -158,71 +182,57 @@ function DetalleVenta({ setPagina }) {
               </span>
 
               <div>
-
                 <small className="text-secondary">
-                  Total de venta
+                  Total
                 </small>
 
                 <h3 className="fw-bold mb-0">
                   S/. 120.90
                 </h3>
-
               </div>
 
             </div>
-
           </div>
-
         </div>
 
       </div>
 
-
-      {/* =====================================================
-          CONTENIDO
-      ===================================================== */}
-
       <div className="row g-4">
 
-        {/* ===================================================
-            AGREGAR PRODUCTO A LA VENTA
-        =================================================== */}
-
+        {/* Formulario */}
         <div className="col-12 col-lg-4">
 
-          <div className="card border-0 shadow-sm rounded-4">
+          <div className="card detalle-card border-0 shadow-sm rounded-4">
 
             <div className="card-header bg-warning-subtle border-0 p-4">
 
               <div className="d-flex align-items-center gap-3">
 
-                <span className="fs-2">
-                  🎮
-                </span>
+                <div className="detalle-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
+                  <span className="fs-2">
+                    🎮
+                  </span>
+                </div>
 
                 <div>
-
                   <h4 className="fw-bold mb-1">
                     Agregar producto
                   </h4>
 
                   <small className="text-secondary">
-                    Añade un producto a la venta
+                    Completa los datos del detalle
                   </small>
-
                 </div>
 
               </div>
 
             </div>
 
-
             <div className="card-body p-4">
 
-              <form>
+              <form onSubmit={guardarDetalle}>
 
-                {/* PRODUCTO */}
-
+                {/* Producto */}
                 <div className="mb-3">
 
                   <label
@@ -236,31 +246,28 @@ function DetalleVenta({ setPagina }) {
                     className="form-select"
                     id="id_producto"
                     name="id_producto"
+                    value={detalle.id_producto}
+                    onChange={cambiarDato}
                     required
                   >
-
                     <option value="">
                       Seleccionar producto
                     </option>
 
                     {productos.map((producto) => (
-
                       <option
                         key={producto.id_producto}
                         value={producto.id_producto}
                       >
                         {producto.nombre_producto}
                       </option>
-
                     ))}
 
                   </select>
 
                 </div>
 
-
-                {/* CANTIDAD */}
-
+                {/* Cantidad */}
                 <div className="mb-3">
 
                   <label
@@ -275,16 +282,16 @@ function DetalleVenta({ setPagina }) {
                     className="form-control"
                     id="cantidad"
                     name="cantidad"
-                    min="1"
                     placeholder="Ej. 2"
+                    min="1"
+                    value={detalle.cantidad}
+                    onChange={cambiarDato}
                     required
                   />
 
                 </div>
 
-
-                {/* PRECIO UNITARIO */}
-
+                {/* Precio */}
                 <div className="mb-3">
 
                   <label
@@ -305,9 +312,11 @@ function DetalleVenta({ setPagina }) {
                       className="form-control"
                       id="precio_unitario"
                       name="precio_unitario"
+                      placeholder="0.00"
                       min="0"
                       step="0.01"
-                      placeholder="0.00"
+                      value={detalle.precio_unitario}
+                      onChange={cambiarDato}
                       required
                     />
 
@@ -315,9 +324,7 @@ function DetalleVenta({ setPagina }) {
 
                 </div>
 
-
-                {/* SUBTOTAL */}
-
+                {/* Subtotal */}
                 <div className="mb-4">
 
                   <label
@@ -338,28 +345,34 @@ function DetalleVenta({ setPagina }) {
                       className="form-control"
                       id="subtotal"
                       name="subtotal"
+                      placeholder="0.00"
                       min="0"
                       step="0.01"
-                      placeholder="0.00"
+                      value={detalle.subtotal}
+                      onChange={cambiarDato}
                       required
                     />
 
                   </div>
 
-                  <div className="form-text">
-                    Luego podremos calcularlo automáticamente.
-                  </div>
-
                 </div>
 
-
-                <div className="d-grid">
+                {/* Botones */}
+                <div className="d-grid gap-2">
 
                   <button
                     type="submit"
                     className="btn btn-warning"
                   >
-                    + Agregar producto
+                    Agregar producto
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={limpiarFormulario}
+                  >
+                    Limpiar
                   </button>
 
                 </div>
@@ -372,11 +385,7 @@ function DetalleVenta({ setPagina }) {
 
         </div>
 
-
-        {/* ===================================================
-            TABLA DETALLE DE VENTA
-        =================================================== */}
-
+        {/* Tabla */}
         <div className="col-12 col-lg-8">
 
           <div className="card border-0 shadow-sm rounded-4">
@@ -394,36 +403,28 @@ function DetalleVenta({ setPagina }) {
                     </span>
 
                     <div>
-
                       <h4 className="fw-bold mb-1">
                         Productos de la venta
                       </h4>
 
                       <small className="text-secondary">
-                        Detalle de los productos registrados
+                        Detalle de productos registrados
                       </small>
-
                     </div>
 
                   </div>
 
                 </div>
 
-
                 <div className="col-12 col-sm-auto">
-
                   <span className="badge bg-primary-subtle text-primary fs-6">
-
                     {detalles.length} productos
-
                   </span>
-
                 </div>
 
               </div>
 
             </div>
-
 
             <div className="card-body pt-0">
 
@@ -434,77 +435,48 @@ function DetalleVenta({ setPagina }) {
                   <thead className="table-light">
 
                     <tr>
-
-                      <th>
-                        Producto
-                      </th>
-
+                      <th>Producto</th>
                       <th className="text-center">
                         Cantidad
                       </th>
-
-                      <th>
-                        Precio unitario
-                      </th>
-
-                      <th>
-                        Subtotal
-                      </th>
-
+                      <th>Precio</th>
+                      <th>Subtotal</th>
                       <th className="text-center">
                         Acción
                       </th>
-
                     </tr>
 
                   </thead>
 
-
                   <tbody>
 
-                    {detalles.map((detalle) => (
+                    {detalles.map((item) => (
 
                       <tr
-                        key={`${detalle.id_venta}-${detalle.id_producto}`}
+                        key={`${item.id_venta}-${item.id_producto}`}
                       >
 
                         <td>
-
                           <div className="fw-semibold">
-                            {detalle.nombre_producto}
+                            {item.nombre_producto}
                           </div>
 
                           <small className="text-secondary">
-                            Producto #{detalle.id_producto}
+                            Producto #{item.id_producto}
                           </small>
-
                         </td>
-
 
                         <td className="text-center">
-
-                          <span className="badge text-bg-light fs-6">
-
-                            {detalle.cantidad}
-
-                          </span>
-
+                          {item.cantidad}
                         </td>
-
 
                         <td>
-
-                          S/. {detalle.precio_unitario}
-
+                          S/. {item.precio_unitario}
                         </td>
 
-
-                        <td className="fw-bold text-success">
-
-                          S/. {detalle.subtotal}
-
+                        <td className="fw-semibold text-success">
+                          S/. {item.subtotal}
                         </td>
-
 
                         <td className="text-center">
 
@@ -529,24 +501,18 @@ function DetalleVenta({ setPagina }) {
 
             </div>
 
-
-            {/* TOTAL */}
-
+            {/* Total */}
             <div className="card-footer bg-white border-0 p-4">
 
-              <div className="d-flex justify-content-end">
+              <div className="text-end">
 
-                <div className="text-end">
+                <small className="text-secondary d-block">
+                  Total de la venta
+                </small>
 
-                  <small className="text-secondary d-block">
-                    Total de la venta
-                  </small>
-
-                  <span className="fs-3 fw-bold text-success">
-                    S/. 120.90
-                  </span>
-
-                </div>
+                <span className="fs-3 fw-bold text-success">
+                  S/. 120.90
+                </span>
 
               </div>
 
@@ -561,5 +527,4 @@ function DetalleVenta({ setPagina }) {
     </div>
   );
 }
-
 export default DetalleVenta;

@@ -1,0 +1,16 @@
+.dashboard-card {
+  transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+}
+
+.dashboard-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.dashboard-date {
+  min-width: 240px;
+}

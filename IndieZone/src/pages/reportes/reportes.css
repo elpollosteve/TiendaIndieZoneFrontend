@@ -1,0 +1,12 @@
+.reporte-card {
+  transition: transform 0.2s ease;
+}
+
+.reporte-card:hover {
+  transform: translateY(-3px);
+}
+
+.reporte-icon {
+  width: 60px;
+  height: 60px;
+}

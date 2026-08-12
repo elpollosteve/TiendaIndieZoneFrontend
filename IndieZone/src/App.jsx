@@ -1,139 +1,75 @@
 import { useState } from "react";
 
-import Login from "./components/Login";
-import Navbar from "./components/Navbar";
+// Componentes
+import Navbar from "./components/navbar/Navbar";
 
-import Dashboard from "./components/Dashboard";
-import RegistroProducto from "./components/RegistroProducto";
-import Categoria from "./components/Categoria";
-import Oferta from "./components/Oferta";
-import Ventas from "./components/Ventas";
-import DetalleVenta from "./components/DetalleVenta";
-import Cliente from "./components/Cliente";
-import Reportes from "./components/Reportes";
-
+// Páginas
+import Login from "./pages/login/Login";
+import Dashboard from "./pages/dashboard/Dashboard";
+import RegistroProducto from "./pages/productos/RegistroProducto";
+import Categoria from "./pages/categorias/Categoria";
+import Oferta from "./pages/ofertas/Oferta";
+import Cliente from "./pages/clientes/Cliente";
+import Ventas from "./pages/ventas/Ventas";
+import DetalleVenta from "./pages/ventas/DetalleVenta";
+import Reportes from "./pages/reportes/Reportes";
 
 function App() {
-
   const [sesionIniciada, setSesionIniciada] = useState(false);
-
   const [pagina, setPagina] = useState("dashboard");
 
-
-  // =========================================================
-  // LOGIN
-  // =========================================================
-
+  // Login
   if (!sesionIniciada) {
-
     return (
       <Login
         setSesionIniciada={setSesionIniciada}
       />
     );
-
   }
-
-
-  // =========================================================
-  // SISTEMA
-  // =========================================================
 
   return (
     <div className="min-vh-100 bg-body-tertiary">
 
-
-      {/* NAVBAR */}
-
+      {/* Menú */}
       <Navbar
         pagina={pagina}
         setPagina={setPagina}
         setSesionIniciada={setSesionIniciada}
       />
 
-
-      {/* CONTENIDO */}
-
+      {/* Páginas */}
       <main className="container-fluid px-3 px-md-4 px-lg-5 py-4">
 
-
-        {/* DASHBOARD */}
-
         {pagina === "dashboard" && (
-
-          <Dashboard
-            setPagina={setPagina}
-          />
-
+          <Dashboard setPagina={setPagina} />
         )}
-
-
-        {/* PRODUCTOS */}
 
         {pagina === "producto" && (
-
-          <RegistroProducto
-            setPagina={setPagina}
-          />
-
+          <RegistroProducto setPagina={setPagina} />
         )}
-
-
-        {/* CATEGORÍAS */}
 
         {pagina === "categoria" && (
-
           <Categoria />
-
         )}
-
-
-        {/* OFERTAS */}
 
         {pagina === "oferta" && (
-
           <Oferta />
-
         )}
-
-
-        {/* VENTAS */}
-
-        {pagina === "ventas" && (
-
-          <Ventas
-            setPagina={setPagina}
-          />
-
-        )}
-
-
-        {/* DETALLE DE VENTA */}
-
-        {pagina === "detalleVenta" && (
-
-          <DetalleVenta
-            setPagina={setPagina}
-          />
-
-        )}
-
-
-        {/* CLIENTES */}
 
         {pagina === "cliente" && (
-
           <Cliente />
-
         )}
 
+        {pagina === "ventas" && (
+          <Ventas setPagina={setPagina} />
+        )}
 
-        {/* REPORTES */}
+        {pagina === "detalleVenta" && (
+          <DetalleVenta setPagina={setPagina} />
+        )}
 
         {pagina === "reportes" && (
-
           <Reportes />
-
         )}
 
       </main>
@@ -141,5 +77,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

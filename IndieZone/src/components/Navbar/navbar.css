@@ -1,0 +1,13 @@
+.navbar-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.navbar-brand {
+  cursor: pointer;
+}
+
+.navbar .btn {
+  white-space: nowrap;
+}

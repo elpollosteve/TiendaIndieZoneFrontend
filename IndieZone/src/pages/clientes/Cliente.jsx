@@ -14,11 +14,8 @@ function Cliente() {
   });
 
   const [clientes, setClientes] = useState([]);
-
   const [clienteEditando, setClienteEditando] = useState(null);
-
   const [busqueda, setBusqueda] = useState("");
-
   const [cargando, setCargando] = useState(true);
 
   const [alerta, setAlerta] = useState({
@@ -32,8 +29,8 @@ function Cliente() {
 
     try {
       const respuesta = await api.get("/clientes/");
-
       setClientes(respuesta.data);
+
     } catch (error) {
       console.error(error);
 
@@ -43,6 +40,7 @@ function Cliente() {
         tipo: "danger",
         mensaje: "No se pudo obtener la información de clientes."
       });
+
     } finally {
       setCargando(false);
     }
@@ -74,7 +72,7 @@ function Cliente() {
     setClienteEditando(null);
   };
 
-  // Obtener mensaje del backend
+  // Obtener error del backend
   const obtenerMensajeError = (error) => {
     const detalle = error.response?.data?.detail;
 
@@ -89,7 +87,7 @@ function Cliente() {
     return "No se pudo completar la operación.";
   };
 
-  // Guardar o actualizar
+  // Guardar o editar cliente
   const guardarCliente = async (e) => {
     e.preventDefault();
 
@@ -104,6 +102,7 @@ function Cliente() {
           tipo: "success",
           mensaje: "Cliente actualizado correctamente."
         });
+
       } else {
         await api.post(
           "/clientes/",
@@ -117,7 +116,6 @@ function Cliente() {
       }
 
       limpiarFormulario();
-
       await cargarClientes();
 
     } catch (error) {
@@ -128,7 +126,7 @@ function Cliente() {
     }
   };
 
-  // Cargar datos para editar
+  // Editar cliente
   const editarCliente = (item) => {
     setCliente({
       nombre: item.nombre,
@@ -152,7 +150,7 @@ function Cliente() {
     });
   };
 
-  // Eliminar
+  // Eliminar cliente
   const eliminarCliente = async (idCliente) => {
     const confirmar = window.confirm(
       "¿Deseas eliminar este cliente?"
@@ -197,7 +195,7 @@ function Cliente() {
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
   };
 
-  // Buscar
+  // Buscar clientes
   const clientesFiltrados = clientes.filter((item) => {
     const texto = busqueda.toLowerCase();
 
@@ -255,29 +253,23 @@ function Cliente() {
               <div className="d-flex align-items-center gap-3">
 
                 <div className="cliente-icon bg-white rounded-circle d-flex align-items-center justify-content-center">
-
                   <span className="fs-2">
                     👤
                   </span>
-
                 </div>
 
                 <div>
 
                   <h4 className="fw-bold mb-1">
-
                     {clienteEditando
                       ? "Editar cliente"
                       : "Nuevo cliente"}
-
                   </h4>
 
                   <small className="text-secondary">
-
                     {clienteEditando
                       ? "Modifica los datos"
                       : "Completa los datos del cliente"}
-
                   </small>
 
                 </div>
@@ -301,6 +293,7 @@ function Cliente() {
                     type="text"
                     className="form-control"
                     name="nombre"
+                    placeholder="Ej. Carlos"
                     maxLength="50"
                     value={cliente.nombre}
                     onChange={cambiarDato}
@@ -320,6 +313,7 @@ function Cliente() {
                     type="text"
                     className="form-control"
                     name="apellido"
+                    placeholder="Ej. Ramírez"
                     maxLength="50"
                     value={cliente.apellido}
                     onChange={cambiarDato}
@@ -339,6 +333,7 @@ function Cliente() {
                     type="text"
                     className="form-control"
                     name="dni"
+                    placeholder="Ej. 12345678"
                     maxLength="8"
                     pattern="[0-9]{8}"
                     value={cliente.dni}
@@ -347,7 +342,7 @@ function Cliente() {
                   />
 
                   <div className="form-text">
-                    Debe contener 8 números.
+                    Debe contener exactamente 8 números.
                   </div>
 
                 </div>
@@ -363,6 +358,7 @@ function Cliente() {
                     type="email"
                     className="form-control"
                     name="correo"
+                    placeholder="Ej. cliente@gmail.com"
                     maxLength="100"
                     value={cliente.correo}
                     onChange={cambiarDato}
@@ -382,6 +378,7 @@ function Cliente() {
                     type="tel"
                     className="form-control"
                     name="telefono"
+                    placeholder="Ej. 987654321"
                     maxLength="15"
                     value={cliente.telefono}
                     onChange={cambiarDato}
@@ -419,11 +416,9 @@ function Cliente() {
                         : "btn btn-primary"
                     }
                   >
-
                     {clienteEditando
                       ? "Guardar cambios"
                       : "Guardar cliente"}
-
                   </button>
 
                   <button
@@ -431,11 +426,9 @@ function Cliente() {
                     className="btn btn-outline-secondary"
                     onClick={limpiarFormulario}
                   >
-
                     {clienteEditando
                       ? "Cancelar edición"
                       : "Limpiar"}
-
                   </button>
 
                 </div>
@@ -448,7 +441,7 @@ function Cliente() {
 
         </div>
 
-        {/* Clientes */}
+        {/* Lista */}
         <div className="col-12 col-lg-8">
 
           <div className="card border-0 shadow-sm rounded-4">
@@ -520,7 +513,6 @@ function Cliente() {
 
                   <tbody>
 
-                    {/* Cargando */}
                     {cargando && (
                       <tr>
                         <td
@@ -532,7 +524,6 @@ function Cliente() {
                       </tr>
                     )}
 
-                    {/* Clientes */}
                     {!cargando &&
                       clientesFiltrados.map((item) => (
 
@@ -543,9 +534,7 @@ function Cliente() {
                           </td>
 
                           <td className="fw-semibold">
-
                             {item.nombre} {item.apellido}
-
                           </td>
 
                           <td>
@@ -600,7 +589,6 @@ function Cliente() {
 
                       ))}
 
-                    {/* Sin datos */}
                     {!cargando &&
                       clientesFiltrados.length === 0 && (
 
@@ -610,11 +598,9 @@ function Cliente() {
                             colSpan="7"
                             className="text-center text-secondary py-4"
                           >
-
                             {busqueda
                               ? "No se encontraron clientes."
                               : "No hay clientes registrados."}
-
                           </td>
 
                         </tr>

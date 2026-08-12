@@ -6,7 +6,7 @@ function Login({ setSesionIniciada }) {
   const [contrasena, setContrasena] = useState("");
   const [mensaje, setMensaje] = useState("");
 
-  const USUARIO_VALIDO = "admin";
+  const USUARIO_VALIDO = "AaronMariano@gmail.com";
   const CONTRASENA_VALIDA = "admin123";
 
   const iniciarSesion = (e) => {
